@@ -1,0 +1,140 @@
+/** <module> Game
+
+Responsible for all game related predicates.
+*/
+
+:-include('util.pl').
+
+board_width(9).
+board_height(9).
+
+empty(0).
+mountain(-1).
+small_cave(-2).
+large_cave(-3).
+
+color_value(w1, 'white', 1).
+color_value(w2, 'white', 2).
+color_value(w3, 'white', 3).
+color_value(w4, 'white', 4).
+color_value(w5, 'white', 5).
+color_value(b1, 'black', 1).
+color_value(b2, 'black', 2).
+color_value(b3, 'black', 3).
+color_value(b4, 'black', 4).
+color_value(b5, 'black', 5).
+
+%!      init_board(-Board:list) is det.
+%
+%       True always.
+%
+%       @arg Board      the board to init. A list of lists
+init_board(Board) :-
+    init_board_half('white', Half1),
+
+    init_middle_row(MiddleRow),
+    append(Half1, [MiddleRow], Board1),
+
+    init_board_half('black', Half2Reversed),
+    reverse(Half2Reversed, Half2),
+
+    append(Board1, Half2, Board).
+
+%!      init_board_half(+Color:string, -Half:list) is det.
+%
+%       True always.
+%
+%       @arg Color      the color that the pieces have in the respective half
+%       @arg Half       the half to init. A list of lists
+init_board_half(Color, Half) :-
+    % first row
+    init_border_row(Color, Row1),
+
+    % second row
+    init_second_row(Color, Row2),
+    append([Row1], [Row2], PiecesHalf),
+    
+    % number of empty rows
+    board_height(Height),
+    EmptyRowsAmount is div(Height - 1, 2) - 2,
+
+    % adds the empty rows
+    init_empty_row(EmptyRow),
+    fill_list(EmptyRow, EmptyRowsAmount, AllEmptyRows),
+
+    append(PiecesHalf, AllEmptyRows, Half).
+
+%!      init_middle_row(-Row:list) is det.
+%
+%       True always.
+%
+%       @arg Row        the row to init that represents the middle row of a board
+init_middle_row(Row) :-
+    small_cave(SC),
+    large_cave(LC),
+    empty(Empty),
+    Row1 = [SC],
+
+    board_width(Width),
+    EmptyCellsAmount is div((Width - 1), 2) - 1,
+    fill_list(Empty, EmptyCellsAmount, EmptyCells),
+    append(Row1, EmptyCells, Row2),
+
+    append(Row2, [LC], Row3),
+
+    append(Row3, EmptyCells, Row4),
+
+    append(Row4, [SC], Row).
+
+%!      init_border_row(+Color:string, -Row:list) is det.
+%
+%       True always.
+%
+%       @arg Color      the color that the pieces have in the row
+%       @arg Row        the row to init that represents the closest row to its plyer (being it on the top or bottom)
+init_border_row(Color, Row) :-
+    mountain(Mountain),
+    Row1 = [Mountain],
+
+    color_value(C3, Color, 3),
+    append(Row1, [C3], Row2),
+    
+    board_width(Width),
+    W2Size is Width - 4,
+    color_value(C2, Color, 2),
+    fill_list(C2, W2Size, W2List),
+    append(Row2, W2List, Row3),
+
+    append(Row3, [C3], Row4),
+
+    append(Row4, [Mountain], Row).
+
+%!      init_second_row(+Color:string, -Row:list) is det.
+%
+%       True always.
+%
+%       @arg Color      the color that the pieces have in the row
+%       @arg Row        the row to init that represents the 2nd closest row to its plyer (being it on the top or bottom)
+init_second_row(Color, Row) :-
+    empty(Empty),
+    board_width(Width),
+    EmptyCells is div((Width - 1), 2),
+    color_value(C4, Color, 4),
+
+    fill_list(Empty, EmptyCells, EmptyCellsList),
+    Row1 = EmptyCellsList,
+
+    append(Row1, [C4], Row2),
+
+    append(Row2, Row1, Row).
+
+%!      init_empty_row(-Row:list) is det.
+%
+%       True always.
+%
+%       @arg Row        the row to init that represents one of the empty rows of the board
+init_empty_row(Row) :-
+    empty(Empty),
+    board_width(Width),
+
+    fill_list(Empty, Width, Row).
