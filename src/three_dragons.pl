@@ -6,6 +6,7 @@
 %       True always.
 %
 %       @tbd
-play() :-
+play :-
     init_board(Board),
+    write_header,
     write_board(Board).

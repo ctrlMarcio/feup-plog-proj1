@@ -4,25 +4,11 @@ Responsible for all game related predicates.
 */
 
 :-include('util.pl').
+:-include('pieces.pl').
+:-use_module(library(lists)).
 
 board_width(9).
 board_height(9).
-
-empty(0).
-mountain(-1).
-small_cave(-2).
-large_cave(-3).
-
-color_value(w1, 'white', 1).
-color_value(w2, 'white', 2).
-color_value(w3, 'white', 3).
-color_value(w4, 'white', 4).
-color_value(w5, 'white', 5).
-color_value(b1, 'black', 1).
-color_value(b2, 'black', 2).
-color_value(b3, 'black', 3).
-color_value(b4, 'black', 4).
-color_value(b5, 'black', 5).
 
 %!      init_board(-Board:list) is det.
 %
@@ -30,12 +16,12 @@ color_value(b5, 'black', 5).
 %
 %       @arg Board      the board to init. A list of lists
 init_board(Board) :-
-    init_board_half('white', Half1),
+    init_board_half('o', Half1),
 
     init_middle_row(MiddleRow),
     append(Half1, [MiddleRow], Board1),
 
-    init_board_half('black', Half2Reversed),
+    init_board_half('x', Half2Reversed),
     reverse(Half2Reversed, Half2),
 
     append(Board1, Half2, Board).
