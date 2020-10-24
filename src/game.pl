@@ -7,6 +7,8 @@ Responsible for all game related predicates.
 :-include('pieces.pl').
 :-use_module(library(lists)).
 
+/* The board dimensions */
+
 board_width(9).
 board_height(9).
 
