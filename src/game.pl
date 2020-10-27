@@ -9,12 +9,13 @@ Responsible for all game related predicates.
 
 /* The board dimensions */
 
+% use an odd width if possible to avoid errors
 board_width(9).
 board_height(9).
 
 %!      init_board(-Board:list) is det.
 %
-%       True always.
+%       True whenever the board_witdth and board_height are larger than 4 and the widht is odd.
 %
 %       @arg Board      the board to init. A list of lists
 init_board(Board) :-
@@ -28,9 +29,31 @@ init_board(Board) :-
 
     append(Board1, Half2, Board).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  Private predicates below  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%!      empty_board(-Board:list) is det.
+%
+%       Gets an empty board.
+%       True whenever the board_witdth and board_height are larger than 4 and the widht is odd.
+%
+%       @arg Board      the board to init. A list of lists
+empty_board(Board) :-
+    empty(Cell),
+    init_board_half(Cell, Half1),
+
+    init_middle_row(MiddleRow),
+    append(Half1, [MiddleRow], Board1),
+
+    init_board_half(Cell, Half2Reversed),
+    reverse(Half2Reversed, Half2),
+
+    append(Board1, Half2, Board).
+
 %!      init_board_half(+Color:string, -Half:list) is det.
 %
-%       True always.
+%       True whenever the board_witdth and board_height are larger than 4 and the widht is odd.
 %
 %       @arg Color      the color that the pieces have in the respective half
 %       @arg Half       the half to init. A list of lists
@@ -99,13 +122,17 @@ init_border_row(Color, Row) :-
 
 %!      init_second_row(+Color:string, -Row:list) is det.
 %
-%       True always.
+%       True whenever the board_witdth and board_height are larger than 4 and the widht is odd.
 %
 %       @arg Color      the color that the pieces have in the row
 %       @arg Row        the row to init that represents the 2nd closest row to its plyer (being it on the top or bottom)
 init_second_row(Color, Row) :-
-    empty(Empty),
+    % verifies if the width of the board is odd
     board_width(Width),
+    odd(Width),
+
+    % gets the values to fill
+    empty(Empty),
     EmptyCells is div((Width - 1), 2),
     color_value(C4, Color, 4),
 

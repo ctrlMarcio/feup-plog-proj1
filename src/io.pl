@@ -70,8 +70,7 @@ write_array([H|T]) :-
 
 %       @tbd
 write_next_player(Player):-
-    write('Todo menina Leonor m Gomes'), write(Player), nl,
-    write('está a dar write de player para nao dar erro chato de singleton btw'), nl.
+    write('Menina Leonor M Gomes dá write do próximo jogador de maneira bonita :) '), write(Player), nl.
 
 %!      write_border is det.
 %
