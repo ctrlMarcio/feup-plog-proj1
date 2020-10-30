@@ -19,21 +19,29 @@ ___
 
 ## Who and What
 
-> - identification of the project (game)
-> - identification of the group
->   - group's name
->   - practical class
->   - UP's number and complete name of each element
+- Three Dragons 2 made with ❤ by
+  - Leonor Gomes, up201806567 • [GitHub](https://github.com/leonormgomes) • [Sigarra](https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=201806567)
+  - Márcio Duarte, up201909936 • [GitHub](https://github.com/ctrlMarcio) • [Sigarra](https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=201909936)
 
 ## Drogon, Rhaegal, and Viserion?
 
 **AKA game description**
 
-> - brief description of the game and its rules (**max 300 words**)
-> - biography (such as game official's page, rules' book, etc.)
+> - brief description of the game and its rules (**max 300 words**) - Leonor
+  
+### The Game Board
+
+> Leonor
+
+### Biography
+
+> Leonor
+> - sbslkdfsdf
+> - sodffsdf
 
 ## Game State Representation
 
+> Márcio
 > - indication of the game state is represented, including
 >   - board (tipically a list of lists with different atoms as pieces)
 >   - current player
