@@ -50,3 +50,11 @@ insert(Element, [_|T], 1, [Element|T]).
 insert(Element, [H1|T1], Position, [H1|T2]) :-
     Position1 is Position - 1,
     insert(Element, T1, Position1, T2).
+
+% TODO
+insert_matrix(Element, [MH|TH], 1, Column, [Res|TH]) :-
+    insert(Element, MH, Column, Res).
+insert_matrix(Element, [HT|MT], Row, Column, [HT|Res]) :-
+    Row > 1,
+    Row1 is Row - 1,
+    insert_matrix(Element, MT, Row1, Column, Res).

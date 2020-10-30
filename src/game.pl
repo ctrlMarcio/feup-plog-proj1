@@ -29,10 +29,6 @@ init_board(Board) :-
 
     append(Board1, Half2, Board).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%  Private predicates below  %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %!      empty_board(-Board:list) is det.
 %
 %       Gets an empty board.
@@ -50,6 +46,10 @@ empty_board(Board) :-
     reverse(Half2Reversed, Half2),
 
     append(Board1, Half2, Board).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  Private predicates below  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %!      init_board_half(+Color:string, -Half:list) is det.
 %

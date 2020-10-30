@@ -33,6 +33,12 @@ write_board(Board, NextPlayer) :-
     write_pieces(Board),
     write_next_player(NextPlayer).
 
+% TODO
+write_end_board(Board, Winner) :-
+    write_border,
+    write_pieces(Board),
+    write_winner(Winner).
+
 %!      repeat_string(+String:string, +Amount:int) is det.
 %
 %       Writes a string a given number of times.
@@ -51,7 +57,7 @@ repeat_string(String, Amount) :-
 %       True when the board is well defined.
 %
 %       @arg Board      the board to be written
-write_pieces([]).
+write_pieces([]) :- nl.
 write_pieces([H|T]) :-
     write('|'), write_array(H), nl,
     write_line,
@@ -70,7 +76,11 @@ write_array([H|T]) :-
 
 %       @tbd
 write_next_player(Player):-
-    write('Menina Leonor M Gomes dá write do próximo jogador de maneira bonita :) '), write(Player), nl.
+    write('Menina Leonor M Gomes dá write do próximo jogador de maneira bonita :) '), write(Player), nl, nl.
+
+% TODO
+write_winner(Player):-
+    write(Player), write(' won!!'), nl, nl.
 
 %!      write_border is det.
 %
