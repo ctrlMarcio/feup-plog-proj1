@@ -19,12 +19,14 @@ board_height(9).
 %
 %       @arg Board      the board to init. A list of lists
 init_board(Board) :-
-    init_board_half('o', Half1),
+    second_player(Second),
+    init_board_half(Second, Half1),
 
     init_middle_row(MiddleRow),
     append(Half1, [MiddleRow], Board1),
 
-    init_board_half('x', Half2Reversed),
+    first_player(First),
+    init_board_half(First, Half2Reversed),
     reverse(Half2Reversed, Half2),
 
     append(Board1, Half2, Board).

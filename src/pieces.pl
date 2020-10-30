@@ -13,7 +13,10 @@ large_cave('AA').
 /* Playable pieces */
 
 first_player(x).
-second_player(x).
+second_player(o).
+
+next_player(x, o).
+next_player(o, x).
 
 color_value(o1, o, 1).
 color_value(o2, o, 2).

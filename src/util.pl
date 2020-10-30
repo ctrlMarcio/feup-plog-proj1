@@ -40,7 +40,7 @@ odd(X) :-
 %
 %       Inserts an element in an index of a list.
 %       Indexes start at 1.
-%       True when the position index is valid and inserts it.
+%       True when the position index is valid and the insertion was valid.
 %
 %       @arg Element        the element to insert
 %       @arg List           the list to insert the element to
@@ -51,7 +51,17 @@ insert(Element, [H1|T1], Position, [H1|T2]) :-
     Position1 is Position - 1,
     insert(Element, T1, Position1, T2).
 
-% TODO
+%!      insert_matrix(+Element, +Matrix:list, +Row:number, +Column:number, -ResMatrix:list) is det.
+%
+%       Inserts an element in a matrix given its row and column, replacing the previous one.
+%       Indexes start at 1.
+%       True when the position index is valid and the insertion was valid.
+%
+%       @arg Element        the element to insert
+%       @arg Matrix         the list of lists (matrix) to insert the element to
+%       @arg Row            the row to insert the element. Starts at 1
+%       @arg Column         the column to insert the element. Starts at 1
+%       @arg ResMatrix      the resulting list of lists (matrix)
 insert_matrix(Element, [MH|TH], 1, Column, [Res|TH]) :-
     insert(Element, MH, Column, Res).
 insert_matrix(Element, [HT|MT], Row, Column, [HT|Res]) :-

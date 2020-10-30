@@ -33,7 +33,14 @@ write_board(Board, NextPlayer) :-
     write_pieces(Board),
     write_next_player(NextPlayer).
 
-% TODO
+%!      write_end_board(+Board:list, +Winner) is det.
+%
+%       Writes a horizontal border, followed by the actual board (game state) and and indication to the winner of the
+%       game.
+%       True when the board is well defined.
+%
+%       @arg Board          the board to be written
+%       @arg Winner         the winner of the game
 write_end_board(Board, Winner) :-
     write_border,
     write_pieces(Board),
@@ -74,11 +81,21 @@ write_array([H|T]) :-
     write(' '), write(H), write(' |'),
     write_array(T).
 
-%       @tbd
+%!      write_next_player(+Player) is det.
+%
+%       Writes an indication to the next player.
+%       True when the Player is defined.
+%
+%       @arg Player     the next player
 write_next_player(Player):-
-    write('Menina Leonor M Gomes dá write do próximo jogador de maneira bonita :) '), write(Player), nl, nl.
+    write('Next player: '), write(Player), nl, nl.
 
-% TODO
+%!      write_winner(+Player) is det.
+%
+%       Writes an indication to the winner of the game.
+%       True when the Player is defined.
+%
+%       @arg Player     the winner of the game
 write_winner(Player):-
     write(Player), write(' won!!'), nl, nl.
 
