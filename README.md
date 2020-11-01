@@ -45,21 +45,26 @@ Three dragons is a board game heavily inspired by ancient games such as Petteia,
 
 <img src="resources/official_board.png" width=500/>
 
-The game is named for the three triangular symbols across the center of the board representing dragon caves. In the four corners there are "mountains" that cannot be occupied. Both the mountains and the dragon caves cannot be moved across or occupied by player pieces.
+The game is named by the three triangular symbols across the center of the board representing dragon caves. In the four corners there are "mountains" that cannot be occupied by player pieces nor moved across. The same precedent is applied to the dragon caves.
 
 ### Pieces
 
 Each player starts with 8 pieces, 5 with strength 2, 2 with strength 3 and 1 with strength 4.
 
-Pieces move like a rook in chess, orthogonally any number of squares. The may not occupy or cross the corner mountain spaces or the triangular dragon cave spaces (they may not cross other pieces as well).
+Pieces move like a rook in chess, orthogonally, and any number of squares.
 
-Pieces can be captured in two ways, either by strength, when a piece with higher strength captures another with lower strength, abdicating 1 level of strength of the piece that captures; or by custodial, when a piece is surrounded on both sides either by 2 enemy pieces, or an enemy piece and a special board cell (mountains or dragon caves). When a capture is made, the enemy piece should be removed from the game.
+Pieces can be captured in two ways:
 
-The player ends when one player is reduced to one piece, the other player is declared the winner.
+- by strength: a piece (1) with higher strength can capture another (2) with lower strength. The piece (1) will after loose a level of strength;
+- by custodial: a piece is surrounded on both sides either by 2 enemy pieces or an enemy piece and an obstacle (dragon cave or mountain).
+
+When a capture is made, the losing piece should be removed from the game.
+
+The game ends when one of the players only has one piece left, hence the other player is declared the winner.
 
 #### Dragons
 
-Dragons are no more than regular pieces but are only spawned when a given player pieces can surround one dragon cave from all orthogonal sides. Only one dragon can be spawned from each cave. The side caves spawn a "dragon" with strength 3, while the main cave spawn a strength 5 "dragon".
+Dragons are regular pieces that can only be spawned whenever its cave is surrounded by all orthogonal sides. Only one dragon can be spawned from each cave. The side caves spawn a dragon with strength 3, while the main cave spawns a strength 5 dragon.
 
 ### Biography
 
@@ -96,23 +101,26 @@ next_player(o, x).
 
 #### Initial Game Board
 
-The game board's width and height can be updated (defaulting at 9), future proofing the game if new variants appear:
+The game board's width and height can be updated (defaulting at 9), future proofing the game in case new variants appear:
 
 ```prolog
 board_width(9).
 board_height(9).
 ```
 
-In order to build a dynamic initial game state, one has to take in consideration the current dimensions of the board itself. Because of that, the board build is not simple. Its most high level rule can be seen below:
+In order to build a dynamic initial game state, one has to take in consideration the current dimensions of the board itself. Consequently, the building of the board is not simple. Its most high level rule can be seen below:
 
 ```prolog
 init_board(Board) :-
+    % initializes the top half of the board
     second_player(Second),
     init_board_half(Second, Half1),
 
+    % initializes the middle row
     init_middle_row(MiddleRow),
     append(Half1, [MiddleRow], Board1),
 
+    % initializes the bottom half
     first_player(First),
     init_board_half(First, Half2Reversed),
     reverse(Half2Reversed, Half2),
@@ -122,7 +130,7 @@ init_board(Board) :-
 
 #### Intermediate Game Board Example
 
-As stated in the assignment, the intermediate and end game board examples are expected to be hard coded instead of somewhat calculated. (For the sake of fidelity, all the present examples were taken from a real game of Three Dragons realized between the members of this group).
+As stated in the assignment, the intermediate and end game board examples are expected to be hard coded, instead of calculated. (For the sake of fidelity, all the present examples were taken from a real game of Three Dragons played amongst the members of this group).
 
 These operations are performed as such:
 
@@ -199,7 +207,7 @@ Resulting in:
 
 #### Piece Representation
 
-More details on the looks are given below ([Visualization of the Game State](#visualization-of-the-game-state)), and, internally, the pieces have not the most complex of the implementations:
+More details on the looks are given below ([Visualization of the Game State](#visualization-of-the-game-state)), and, internally, the pieces' implementation  the most complex of the implementations:
 
 ```prolog
 color_value(o1, o, 1).
@@ -218,7 +226,7 @@ These `color_value` facts work both ways, upon a piece, `o1` for example, one ca
 
 ## Visualization of the Game State
 
-The visualization of the game state predicate, implemented as follows:
+The visualization of the game state predicate is implemented as follows:
 
 ```prolog
 write_board(Board, NextPlayer) :-
