@@ -5,12 +5,12 @@
 Resolution proposal for the first project of the Logic Programming course unit @ FEUP, a game board called [**Three Dragons**](https://boardgamegeek.com/boardgame/306972/three-dragons), based on the works of Scott Allen Czysz.
 [Official Board and Rules](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh).
 
-**As this README is wip, whatever you find in quotation style is merely an indication of what should be present there, not the real content** ᵐᵉᵗᵃ ʳᵉᵃᵈᵐᵉ ᵗᶦᵐᵉ
-
 - [Three Dragons](#three-dragons)
   - [Who and What](#who-and-what)
   - [Drogon, Rhaegal, and Viserion?](#drogon-rhaegal-and-viserion)
     - [The Game Board](#the-game-board)
+    - [Pieces](#pieces)
+      - [Dragons](#dragons)
     - [Biography](#biography)
   - [Game State Representation](#game-state-representation)
     - [Board](#board)
@@ -36,17 +36,36 @@ ___
 
 **AKA game description**
 
-> - brief description of the game and its rules (**max 300 words**) - Leonor
-  
+Three dragons is a board game heavily inspired by ancient games such as Petteia, Tablut and Hnefatafi with some interesting additions:
+
+1. Pieces have strength and can capture pieces with lower strength
+2. There are "dragon caves", which can summon "dragons", more on that below
+
 ### The Game Board
 
-> Leonor
+<img src="resources/official_board.png" width=500/>
+
+The game is named for the three triangular symbols across the center of the board representing dragon caves. In the four corners there are "mountains" that cannot be occupied. Both the mountains and the dragon caves cannot be moved across or occupied by player pieces.
+
+### Pieces
+
+Each player starts with 8 pieces, 5 with strength 2, 2 with strength 3 and 1 with strength 4.
+
+Pieces move like a rook in chess, orthogonally any number of squares. The may not occupy or cross the corner mountain spaces or the triangular dragon cave spaces (they may not cross other pieces as well).
+
+Pieces can be captured in two ways, either by strength, when a piece with higher strength captures another with lower strength, abdicating 1 level of strength of the piece that captures; or by custodial, when a piece is surrounded on both sides either by 2 enemy pieces, or an enemy piece and a special board cell (mountains or dragon caves). When a capture is made, the enemy piece should be removed from the game.
+
+The player ends when one player is reduced to one piece, the other player is declared the winner.
+
+#### Dragons
+
+Dragons are no more than regular pieces but are only spawned when a given player pieces can surround one dragon cave from all orthogonal sides. Only one dragon can be spawned from each cave. The side caves spawn a "dragon" with strength 3, while the main cave spawn a strength 5 "dragon".
 
 ### Biography
 
-> Leonor
-> - sbslkdfsdf
-> - sodffsdf
+- [Initial Game Presentation](https://boardgamegeek.com/thread/2347648/three-dragons-entry-2020-two-player-pnp-design-con)
+- [Official Game Rules](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
+- [Official Game Board](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
 
 ## Game State Representation
 
