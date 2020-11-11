@@ -47,6 +47,10 @@ Three dragons is a board game heavily inspired by ancient games such as Petteia,
 
 The game is named by the three triangular symbols across the center of the board representing dragon caves. In the four corners there are "mountains" that cannot be occupied by player pieces nor moved across. The same precedent is applied to the dragon caves.
 
+The initial disposition of the board, according to the official rules is as so:
+
+<img src="resources/official_init_board.png" width=500/>
+
 ### Pieces
 
 Each player starts with 8 pieces, 5 with strength 2, 2 with strength 3 and 1 with strength 4.
@@ -240,11 +244,12 @@ Starts by writing the top border of the board (merely underscores), draws the bo
 The drawing of the board also follows a very intuitive and textbook implementation:
 
 ```prolog
-write_pieces([]) :- nl.
-write_pieces([H|T]) :-
+write_pieces([], 0) :- nl.
+write_pieces([H|T], Rows) :-
     write('|'), write_array(H), nl,
     write_line,
-    write_pieces(T).
+    Rows1 is Rows - 1,
+    write_pieces(T, Rows1).
 ```
 
 Writing the pieces of a single row separated by some margin and a `|`. For now, the pieces' representation follows a simple idea: displaying its owner and level, such that `x2` is the representation of a piece owned by the player `x` and with level `2`. The static board elements are:
@@ -258,9 +263,13 @@ As is implemented in the code snippet below:
 ```prolog
 empty('  ').
 mountain('MM').
-small_cave('cc').
-large_cave('AA').
+small_cave('c1', 1).
+small_cave('c0', 0).
+large_cave('A1', 1).
+large_cave('A0', 0).
 ```
+
+The caves hold, in the second argument, the number of possible spawns left.
 
 A line, which is no more than a bunch of hyphens (calculated accordingly to the board width), is displayed dividing the rows.
 

@@ -30,7 +30,9 @@ write_header :-
 %       @arg NextPlayer     the next player to play
 write_board(Board, NextPlayer) :-
     write_border,
-    write_pieces(Board),
+    board_height(Rows),
+    write_pieces(Board, Rows),
+    write_columns_names(1),
     write_next_player(NextPlayer).
 
 %!      write_end_board(+Board:list, +Winner) is det.
@@ -43,7 +45,8 @@ write_board(Board, NextPlayer) :-
 %       @arg Winner         the winner of the game
 write_end_board(Board, Winner) :-
     write_border,
-    write_pieces(Board),
+    board_height(Rows),
+    write_pieces(Board, Rows),
     write_winner(Winner).
 
 %!      repeat_string(+String:string, +Amount:int) is det.
@@ -58,17 +61,18 @@ repeat_string(String, Amount) :-
     Amount1 is Amount - 1,
     repeat_string(String, Amount1).
 
-%!      write_pieces(+Board:list) is det.
+%!      write_pieces(+Board:list, +Rows:int) is det.
 %
 %       Writes the board withtout a top border.
 %       True when the board is well defined.
 %
 %       @arg Board      the board to be written
-write_pieces([]) :- nl.
-write_pieces([H|T]) :-
-    write('|'), write_array(H), nl,
+write_pieces([], 0).
+write_pieces([H|T], Rows) :-
+    write('|'), write_array(H), write('  '), write(Rows), nl,
     write_line,
-    write_pieces(T).
+    Rows1 is Rows - 1,
+    write_pieces(T, Rows1).
 
 %!      write_array(+Array:list) is det.
 %
@@ -80,6 +84,18 @@ write_array([]).
 write_array([H|T]) :-
     write(' '), write(H), write(' |'),
     write_array(T).
+
+write_columns_names(Column) :-
+    board_width(TotalColumns),
+    Column > TotalColumns,
+    !, nl, nl.
+write_columns_names(Column) :-
+    write('   '),
+    letter(Column, Letter),
+    write(Letter),
+    write(' '),
+    Next is Column + 1,
+    write_columns_names(Next).
 
 %!      write_next_player(+Player) is det.
 %

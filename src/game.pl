@@ -3,15 +3,15 @@
 Responsible for all game related predicates.
 */
 
-:-include('util.pl').
-:-include('pieces.pl').
-:-use_module(library(lists)).
-
 /* The board dimensions */
 
 % use an odd width if possible to avoid errors
 board_width(9).
 board_height(9).
+
+:-include('util.pl').
+:-include('pieces.pl').
+:-use_module(library(lists)).
 
 %!      init_board(-Board:list) is det.
 %
@@ -83,8 +83,8 @@ init_board_half(Color, Half) :-
 %
 %       @arg Row        the row to init that represents the middle row of a board
 init_middle_row(Row) :-
-    small_cave(SC),
-    large_cave(LC),
+    small_cave(SC, 1),
+    large_cave(LC, 1),
     empty(Empty),
     Row1 = [SC],
 

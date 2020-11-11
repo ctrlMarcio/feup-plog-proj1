@@ -7,8 +7,10 @@ Defines all pieces.
 
 empty('  ').
 mountain('MM').
-small_cave('cc').
-large_cave('AA').
+small_cave('c1', 1).
+small_cave('c0', 0).
+large_cave('A1', 1).
+large_cave('A0', 0).
 
 /* Playable pieces */
 
@@ -29,4 +31,3 @@ color_value(x3, x, 3).
 color_value(x4, x, 4).
 color_value(x5, x, 5).
 color_value('  ', '  ', _).
-

@@ -3,6 +3,15 @@
 Container of predicates of general use.
 */
 
+%!      letter(+N:int, -Letter) is det.
+%
+%       Gets the Nth letter of the alphabet.
+%       True when the amount is non negative and less than 27.
+%
+%       @arg N          the Nth element of the alphabet
+%       @arg Letter     the returning letter
+letter(N, Letter) :- nth1(N, [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z], Letter).
+
 %!      fill_list(+Value, +Amount:int, -List:list) is det.
 %
 %       Fills a list with a given value, a given number of times.
