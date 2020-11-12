@@ -35,3 +35,9 @@ initial(GameState) :-
 %       @arg Player             the next player
 display_game(GameState, Player) :-
     write_board(GameState, Player).
+
+% TODO
+valid_moves(GameState, Player, Row-Col, ListOfMoves) :-
+    get_matrix(GameState, Row, Col, Piece), % gets the piece in the Row-Col position
+    color_value(Piece, Player, _),          % verifies if the piece belongs to the player
+    possible_moves(GameState, Row-Col, ListOfMoves).

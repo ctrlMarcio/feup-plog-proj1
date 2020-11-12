@@ -49,9 +49,74 @@ empty_board(Board) :-
 
     append(Board1, Half2, Board).
 
+% TODO
+find_piece(Board, Player, Piece, Row-Col) :-
+    Row1-Col1 = 1-1,
+    find_piece1(Board, Player, Piece, Row1-Col1, Row-Col).
+
+% TODO
+possible_moves(Board, Row-Col, List) :-
+    possible_move_up(Board, Row-Col, RU-CU),
+    possible_move_right(Board, Row-Col, RR-CR),
+    possible_move_down(Board, Row-Col, RD-CD),
+    possible_move_left(Board, Row-Col, RL-CL),
+    L = [RU-CU, RR-CR, RD-CD, RL-CL],
+    delete(L, Row-Col, L1),
+    sort(L1, List). % sort removes duplicates uwu
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  Private predicates below  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TODO
+possible_move_up(Board, Row-Col, RU-CU) :-
+    empty(Empty),
+    NextRow is Row - 1,
+    get_matrix(Board, NextRow, Col, X),
+    X == Empty, !,
+    possible_move_up(Board, NextRow-Col, RU-CU).
+possible_move_up(_, Row-Col, Row-Col).
+
+% TODO
+possible_move_right(Board, Row-Col, RR-CR) :-
+    empty(Empty),
+    NextCol is Col + 1,
+    get_matrix(Board, Row, NextCol, X),
+    X == Empty, !,
+    possible_move_right(Board, Row-NextCol, RR-CR).
+possible_move_right(_, Row-Col, Row-Col).
+
+% TODO
+possible_move_down(Board, Row-Col, RD-CD) :-
+    empty(Empty),
+    NextRow is Row + 1,
+    get_matrix(Board, NextRow, Col, X),
+    X == Empty, !,
+    possible_move_down(Board, NextRow-Col, RD-CD).
+possible_move_down(_, Row-Col, Row-Col).
+
+% TODO
+possible_move_left(Board, Row-Col, RL-CL) :-
+    empty(Empty),
+    NextCol is Col - 1,
+    get_matrix(Board, Row, NextCol, X),
+    X == Empty, !,
+    possible_move_left(Board, Row-NextCol, RL-CL).
+possible_move_left(_, Row-Col, Row-Col).
+
+% TODO
+find_piece1([H|_], Player, Piece, Row1-Col1, Row-Col) :-
+    find_piece_row(H, Player, Piece, Row1-Col1, Row-Col).
+find_piece1([_|T], Player, Piece, Row1-Col1, Row-Col) :-
+    Row2 is Row1 + 1,
+    find_piece1(T, Player, Piece, Row2-Col1, Row-Col).
+
+% TODO
+find_piece_row([H|_], Player, H, Row-Col, Row-Col) :-
+    color_value(H, Player, _).
+find_piece_row([_|T], Player, Piece, Row1-Col1, Row-Col) :-
+    Col2 is Col1 + 1,
+    find_piece_row(T, Player, Piece, Row1-Col2, Row-Col).
 
 %!      init_board_half(+Color:string, -Half:list) is det.
 %

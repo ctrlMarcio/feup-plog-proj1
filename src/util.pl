@@ -77,3 +77,10 @@ insert_matrix(Element, [HT|MT], Row, Column, [HT|Res]) :-
     Row > 1,
     Row1 is Row - 1,
     insert_matrix(Element, MT, Row1, Column, Res).
+
+% TODO
+get_matrix([H|_], 1, Column, X) :-
+    nth1(Column, H, X).
+get_matrix([_|T], Row, Column, X) :-
+    Row1 is Row - 1,
+    get_matrix(T, Row1, Column, X).
