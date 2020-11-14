@@ -21,19 +21,17 @@ write_header :-
     write(' |_|  |_|\\__,_|_|  \\___|_|\\___/   \\___/\\/ |______\\___|\\___/|_| |_|\\___/|_|    |______|_|_| |_| |_|_|\\__\\___|\\__,_(_)'), nl,
     nl, nl.
 
-%!      write_board(+Board:list, +NextPlayer) is det.
+%!      write_board(+Board:list) is det.
 %
 %       Writes a horizontal border, followed by the actual board (game state) and the next player.
 %       True when the board is well defined.
 %
 %       @arg Board          the board to be written
-%       @arg NextPlayer     the next player to play
-write_board(Board, NextPlayer) :-
+write_board(Board) :-
     write_border,
     board_height(Rows),
     write_pieces(Board, Rows),
-    write_columns_names(1),
-    write_next_player(NextPlayer).
+    write_columns_names(1).
 
 %!      write_end_board(+Board:list, +Winner) is det.
 %
@@ -48,6 +46,12 @@ write_end_board(Board, Winner) :-
     board_height(Rows),
     write_pieces(Board, Rows),
     write_winner(Winner).
+
+% TODO
+ask_move(Board, Player, Row1-Col1, Row2-Col2) :-
+    write_next_player(Player),
+    get PiecePosition asking 'What piece will you move?\nExample: a-1: ',
+    get_move(Board, Player, PiecePosition, Row1-Col1, Row2-Col2).
 
 %!      repeat_string(+String:string, +Amount:int) is det.
 %
@@ -69,7 +73,10 @@ repeat_string(String, Amount) :-
 %       @arg Board      the board to be written
 write_pieces([], 0).
 write_pieces([H|T], Rows) :-
-    write('|'), write_array(H), write('  '), write(Rows), nl,
+    write('|'), write_array(H), write('  '),
+    board_height(Height),
+    RowNumber is Height - Rows + 1,
+    write(RowNumber), nl,
     write_line,
     Rows1 is Rows - 1,
     write_pieces(T, Rows1).
@@ -132,3 +139,23 @@ write_line :-
     board_width(Width),
     Amount is Width * 5 + 1,
     repeat_string('-', Amount).
+
+% TODO
+get_move(Board, Player, ReadableCoordinates, Row1-Col1, Row2-Col2) :-
+    readable_to_coordinates(ReadableCoordinates, Row1-Col1),
+    valid_moves(Board, Player, Row1-Col1, ListOfPossibleMoves),
+    possible_move_representation(PossibleMove),
+    insert_multiple_matrix(PossibleMove, Board, ListOfPossibleMoves, DemoMatrix),
+    write_board(DemoMatrix),
+    get Move asking 'Where to? ',
+    readable_to_coordinates(Move, Row2-Col2),
+    Row2-Col2 in ListOfPossibleMoves.
+
+% TODO
+readable_to_coordinates(Cola-Row, Row-Col) :-
+    letter(Col, Cola).
+
+% TODO
+clear_piece(Board, Row-Col, NewBoard) :-
+    empty(EmptyCell),
+    insert_matrix(EmptyCell, Board, Row, Col, NewBoard).

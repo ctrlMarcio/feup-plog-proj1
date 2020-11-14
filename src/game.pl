@@ -9,10 +9,6 @@ Responsible for all game related predicates.
 board_width(9).
 board_height(9).
 
-:-include('util.pl').
-:-include('pieces.pl').
-:-use_module(library(lists)).
-
 %!      init_board(-Board:list) is det.
 %
 %       True whenever the board_witdth and board_height are larger than 4 and the widht is odd.
@@ -50,59 +46,65 @@ empty_board(Board) :-
     append(Board1, Half2, Board).
 
 % TODO
-find_piece(Board, Player, Piece, Row-Col) :-
-    Row1-Col1 = 1-1,
-    find_piece1(Board, Player, Piece, Row1-Col1, Row-Col).
-
-% TODO
 possible_moves(Board, Row-Col, List) :-
-    possible_move_up(Board, Row-Col, RU-CU),
-    possible_move_right(Board, Row-Col, RR-CR),
-    possible_move_down(Board, Row-Col, RD-CD),
-    possible_move_left(Board, Row-Col, RL-CL),
-    L = [RU-CU, RR-CR, RD-CD, RL-CL],
-    delete(L, Row-Col, L1),
-    sort(L1, List). % sort removes duplicates uwu
+    possible_moves_up(Board, Row-Col, ListUp),
+    possible_moves_right(Board, Row-Col, ListRight),
+    possible_moves_down(Board, Row-Col, ListDown),
+    possible_moves_left(Board, Row-Col, ListLeft),
+    append(ListUp, ListRight, List1),
+    append(List1, ListDown, List2),
+    append(List2, ListLeft, List3),
+    delete(List3, Row-Col, List4),  % deletes self position
+    sort(List4, List).                 % sort removes duplicates uwu
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  Private predicates below  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % TODO
-possible_move_up(Board, Row-Col, RU-CU) :-
+possible_moves_up(Board, Row-Col, List) :-
     empty(Empty),
     NextRow is Row - 1,
     get_matrix(Board, NextRow, Col, X),
     X == Empty, !,
-    possible_move_up(Board, NextRow-Col, RU-CU).
-possible_move_up(_, Row-Col, Row-Col).
+    possible_moves_up(Board, NextRow-Col, List1),
+    List = [Row-Col | List1].
+possible_moves_up(_, Row-Col, [Row-Col]).
 
 % TODO
-possible_move_right(Board, Row-Col, RR-CR) :-
+possible_moves_right(Board, Row-Col, List) :-
     empty(Empty),
     NextCol is Col + 1,
     get_matrix(Board, Row, NextCol, X),
     X == Empty, !,
-    possible_move_right(Board, Row-NextCol, RR-CR).
-possible_move_right(_, Row-Col, Row-Col).
+    possible_moves_right(Board, Row-NextCol, List1),
+    List = [Row-Col | List1].
+possible_moves_right(_, Row-Col, [Row-Col]).
 
 % TODO
-possible_move_down(Board, Row-Col, RD-CD) :-
+possible_moves_down(Board, Row-Col, List) :-
     empty(Empty),
     NextRow is Row + 1,
     get_matrix(Board, NextRow, Col, X),
     X == Empty, !,
-    possible_move_down(Board, NextRow-Col, RD-CD).
-possible_move_down(_, Row-Col, Row-Col).
+    possible_moves_down(Board, NextRow-Col, List1),
+    List = [Row-Col | List1].
+possible_moves_down(_, Row-Col, [Row-Col]).
 
 % TODO
-possible_move_left(Board, Row-Col, RL-CL) :-
+possible_moves_left(Board, Row-Col, List) :-
     empty(Empty),
     NextCol is Col - 1,
     get_matrix(Board, Row, NextCol, X),
     X == Empty, !,
-    possible_move_left(Board, Row-NextCol, RL-CL).
-possible_move_left(_, Row-Col, Row-Col).
+    possible_moves_left(Board, Row-NextCol, List1),
+    List = [Row-Col | List1].
+possible_moves_left(_, Row-Col, [Row-Col]).
+
+% TODO
+find_piece(Board, Player, Piece, Row-Col) :-
+    Row1-Col1 = 1-1,
+    find_piece1(Board, Player, Piece, Row1-Col1, Row-Col).
 
 % TODO
 find_piece1([H|_], Player, Piece, Row1-Col1, Row-Col) :-
@@ -196,7 +198,7 @@ init_border_row(Color, Row) :-
 init_second_row(Color, Row) :-
     % verifies if the width of the board is odd
     board_width(Width),
-    odd(Width),
+    Width is_odd,
 
     % gets the values to fill
     empty(Empty),

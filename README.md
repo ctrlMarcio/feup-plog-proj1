@@ -143,7 +143,7 @@ show_intermediate_state :-
     write_header,
     inter1_state(GameState),
     first_player(Player),
-    display_game(GameState, Player).
+    display_game(GameState).
 
 inter1_state(GameState) :-
     empty_board(Tmp),

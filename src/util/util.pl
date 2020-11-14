@@ -84,3 +84,9 @@ get_matrix([H|_], 1, Column, X) :-
 get_matrix([_|T], Row, Column, X) :-
     Row1 is Row - 1,
     get_matrix(T, Row1, Column, X).
+
+% TODO
+insert_multiple_matrix(_, Matrix, [], Matrix).
+insert_multiple_matrix(Element, Matrix, [HR-HC|T], ResMatrix) :-
+    insert_matrix(Element, Matrix, HR, HC, Matrix1),
+    insert_multiple_matrix(Element, Matrix1, T, ResMatrix).

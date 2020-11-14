@@ -7,6 +7,7 @@ Defines all pieces.
 
 empty('  ').
 mountain('MM').
+possible_move_representation('<>').
 small_cave('c1', 1).
 small_cave('c0', 0).
 large_cave('A1', 1).
