@@ -50,7 +50,7 @@ write_end_board(Board, Winner) :-
 % TODO
 ask_move(Board, Player, Row1-Col1, Row2-Col2) :-
     write_next_player(Player),
-    get PiecePosition asking 'What piece will you move?\nExample: a-1: ',
+    ask_user('What piece will you move?\nExample: a-1: ', PiecePosition),
     get_move(Board, Player, PiecePosition, Row1-Col1, Row2-Col2).
 
 %!      repeat_string(+String:string, +Amount:int) is det.
@@ -154,8 +154,3 @@ get_move(Board, Player, ReadableCoordinates, Row1-Col1, Row2-Col2) :-
 % TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-
     letter(Col, Cola).
-
-% TODO
-clear_piece(Board, Row-Col, NewBoard) :-
-    empty(EmptyCell),
-    insert_matrix(EmptyCell, Board, Row, Col, NewBoard).

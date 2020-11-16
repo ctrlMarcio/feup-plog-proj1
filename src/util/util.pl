@@ -28,7 +28,7 @@ fill_list(Value, Amount, List) :-
     List = [Value | Rest].
 
 %!      even(+X) is det.
-%
+%c
 %       Verifies if a number is even.
 %       True when the number is even.
 %

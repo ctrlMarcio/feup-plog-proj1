@@ -57,6 +57,10 @@ possible_moves(Board, Row-Col, List) :-
     delete(List3, Row-Col, List4),  % deletes self position
     sort(List4, List).                 % sort removes duplicates uwu
 
+% TODO
+check_if_eats(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+    clear_surrounded_pieces(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  Private predicates below  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,3 +226,47 @@ init_empty_row(Row) :-
     board_width(Width),
 
     fill_list(Empty, Width, Row).
+
+% TODO
+clear_piece(Board, Row-Col, NewBoard) :-
+    empty(EmptyCell),
+    insert_matrix(EmptyCell, Board, Row, Col, NewBoard).
+
+% TODO
+clear_surrounded_pieces(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+    clear_surrounded_up(Board, Row-Col, Player, OpponentPieces, Board1, OPieces1),
+    clear_surrounded_down(Board1, Row-Col, Player, OPieces1, Board2, OPieces2),
+    clear_surrounded_left(Board2, Row-Col, Player, OPieces2, Board3, OPieces3),
+    clear_surrounded_right(Board3, Row-Col, Player, OPieces3, NewBoard, NewOpponentPieces).
+
+clear_surrounded_up(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+    Row1 is Row-1,
+    Row2 is Row-2,
+    clear_surrounded_cell(Board, Row1-Col, Row2-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces).
+
+clear_surrounded_right(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+    Col1 is Col+1,
+    Col2 is Col+2,
+    clear_surrounded_cell(Board, Row-Col1, Row-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
+
+clear_surrounded_down(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+    Row1 is Row+1,
+    Row2 is Row+2,
+    clear_surrounded_cell(Board, Row1-Col, Row2-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces).
+
+clear_surrounded_left(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+    Col1 is Col-1,
+    Col2 is Col-2,
+    clear_surrounded_cell(Board, Row-Col1, Row-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
+
+% TODO
+clear_surrounded_cell(Board, Row-Col, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+    next_player(Player, OtherPlayer),
+    get_matrix(Board, Row, Col, Piece),
+    color_value(Piece, OtherPlayer, _),
+    get_matrix(Board, Row2, Col2, Piece2),
+    (color_value(Piece2, Player, _) ; object(Piece2)),
+    clear_piece(Board, Row-Col, NewBoard),
+    NewOpponentPieces is OpponentPieces - 1.
+
+clear_surrounded_cell(Board, _, _, _, OpponentPieces, Board, OpponentPieces).
