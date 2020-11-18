@@ -55,8 +55,10 @@ odd(X) :-
 %       @arg List           the list to insert the element to
 %       @arg Position       the index/position where to insert the element. Starts at 1
 %       @arg ResList        the resulting list
+insert(_, [], _, []).
 insert(Element, [_|T], 1, [Element|T]).
 insert(Element, [H1|T1], Position, [H1|T2]) :-
+    Position > 1,
     Position1 is Position - 1,
     insert(Element, T1, Position1, T2).
 

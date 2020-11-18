@@ -46,16 +46,35 @@ empty_board(Board) :-
     append(Board1, Half2, Board).
 
 % TODO
-possible_moves(Board, Row-Col, List) :-
-    possible_moves_up(Board, Row-Col, ListUp),
-    possible_moves_right(Board, Row-Col, ListRight),
-    possible_moves_down(Board, Row-Col, ListDown),
-    possible_moves_left(Board, Row-Col, ListLeft),
+all_valid_moves(_, _, Row-_, []) :-
+    board_height(Height),
+    Row > Height.
+all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
+    Col1 is Col + 1,
+    board_height(Height),
+    Col1 =< Height, !,
+    possible_moves(Board, Row-Col, List1),
+    all_valid_moves(Board, Player, Row-Col1, List2),
+    append(List1, List2, ListOfMoves).
+all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
+    Row1 is Row + 1,
+    possible_moves(Board, Row-Col, List1),
+    all_valid_moves(Board, Player, Row1-0, List2),
+    append(List1, List2, ListOfMoves).
+
+% TODO
+possible_moves(Board, Player, Row-Col, List) :-
+    Row-Col on Board is_of Player,
+    possible_moves_up(Board, Row-Col, Row-Col, ListUp),
+    possible_moves_right(Board, Row-Col, Row-Col, ListRight),
+    possible_moves_down(Board, Row-Col, Row-Col, ListDown),
+    possible_moves_left(Board, Row-Col, Row-Col, ListLeft),
     append(ListUp, ListRight, List1),
     append(List1, ListDown, List2),
     append(List2, ListLeft, List3),
-    delete(List3, Row-Col, List4),  % deletes self position
+    delete(List3, Row-Col-Row-Col, List4),  % deletes self position
     sort(List4, List).                 % sort removes duplicates uwu
+possible_moves(_, _, _, []).
 
 % TODO
 check_if_eats(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
@@ -66,44 +85,44 @@ check_if_eats(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPiece
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % TODO
-possible_moves_up(Board, Row-Col, List) :-
+possible_moves_up(Board, Row1-Col1, Row-Col, List) :-
     empty(Empty),
     NextRow is Row - 1,
     get_matrix(Board, NextRow, Col, X),
-    X == Empty, !,
-    possible_moves_up(Board, NextRow-Col, List1),
-    List = [Row-Col | List1].
-possible_moves_up(_, Row-Col, [Row-Col]).
+    X == Empty, !, % TODO prolog this
+    possible_moves_up(Board, Row1-Col1, NextRow-Col, List1),
+    List = [Row1-Col1-Row-Col | List1].
+possible_moves_up(_, Row1-Col1, Row-Col, [Row1-Col1-Row-Col]).
 
 % TODO
-possible_moves_right(Board, Row-Col, List) :-
+possible_moves_right(Board, Row1-Col1, Row-Col, List) :-
     empty(Empty),
     NextCol is Col + 1,
     get_matrix(Board, Row, NextCol, X),
     X == Empty, !,
-    possible_moves_right(Board, Row-NextCol, List1),
-    List = [Row-Col | List1].
-possible_moves_right(_, Row-Col, [Row-Col]).
+    possible_moves_right(Board, Row1-Col1, Row-NextCol, List1),
+    List = [Row1-Col1-Row-Col | List1].
+possible_moves_right(_, Row1-Col1, Row-Col, [Row1-Col1-Row-Col]).
 
 % TODO
-possible_moves_down(Board, Row-Col, List) :-
+possible_moves_down(Board, Row1-Col1, Row-Col, List) :-
     empty(Empty),
     NextRow is Row + 1,
     get_matrix(Board, NextRow, Col, X),
     X == Empty, !,
-    possible_moves_down(Board, NextRow-Col, List1),
-    List = [Row-Col | List1].
-possible_moves_down(_, Row-Col, [Row-Col]).
+    possible_moves_down(Board, Row1-Col1, NextRow-Col, List1),
+    List = [Row1-Col1-Row-Col | List1].
+possible_moves_down(_, Row1-Col1, Row-Col, [Row1-Col1-Row-Col]).
 
 % TODO
-possible_moves_left(Board, Row-Col, List) :-
+possible_moves_left(Board, Row1-Col1, Row-Col, List) :-
     empty(Empty),
     NextCol is Col - 1,
     get_matrix(Board, Row, NextCol, X),
     X == Empty, !,
-    possible_moves_left(Board, Row-NextCol, List1),
-    List = [Row-Col | List1].
-possible_moves_left(_, Row-Col, [Row-Col]).
+    possible_moves_left(Board, Row1-Col1, Row-NextCol, List1),
+    List = [Row1-Col1-Row-Col | List1].
+possible_moves_left(_, Row1-Col1, Row-Col, [Row1-Col1-Row-Col]).
 
 % TODO
 find_piece(Board, Player, Piece, Row-Col) :-
@@ -228,6 +247,12 @@ init_empty_row(Row) :-
     fill_list(Empty, Width, Row).
 
 % TODO
+valid_piece_moves(Board, Player, Row-Col, ListOfMoves) :-
+    get_matrix(Board, Row, Col, Piece), % gets the piece in the Row-Col position
+    color_value(Piece, Player, _),          % verifies if the piece belongs to the player
+    possible_moves(Board, Row-Col, ListOfMoves).
+
+% TODO
 clear_piece(Board, Row-Col, NewBoard) :-
     empty(EmptyCell),
     insert_matrix(EmptyCell, Board, Row, Col, NewBoard).
@@ -270,3 +295,8 @@ clear_surrounded_cell(Board, Row-Col, Row2-Col2, Player, OpponentPieces, NewBoar
     NewOpponentPieces is OpponentPieces - 1.
 
 clear_surrounded_cell(Board, _, _, _, OpponentPieces, Board, OpponentPieces).
+
+% TODO
+get_destinations([], []).
+get_destinations([_-_-MR2-MC2 | MovesT], [MR2-MC2 | DestinationsT]) :-
+    get_destinations(MovesT, DestinationsT).

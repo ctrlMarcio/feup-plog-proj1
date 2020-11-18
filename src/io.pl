@@ -48,10 +48,10 @@ write_end_board(Board, Winner) :-
     write_winner(Winner).
 
 % TODO
-ask_move(Board, Player, Row1-Col1, Row2-Col2) :-
+ask_move(Board, Player, Row1-Col1-Row2-Col2) :-
     write_next_player(Player),
-    ask_user('What piece will you move?\nExample: a-1: ', PiecePosition),
-    get_move(Board, Player, PiecePosition, Row1-Col1, Row2-Col2).
+    get PiecePosition asking 'What piece will you move?\nExample: a-1: ',
+    get_move(Board, Player, PiecePosition, Row1-Col1-Row2-Col2).
 
 %!      repeat_string(+String:string, +Amount:int) is det.
 %
@@ -141,15 +141,16 @@ write_line :-
     repeat_string('-', Amount).
 
 % TODO
-get_move(Board, Player, ReadableCoordinates, Row1-Col1, Row2-Col2) :-
+get_move(Board, Player, ReadableCoordinates, Row1-Col1-Row2-Col2) :-
     readable_to_coordinates(ReadableCoordinates, Row1-Col1),
-    valid_moves(Board, Player, Row1-Col1, ListOfPossibleMoves),
+    valid_piece_moves(Board, Player, Row1-Col1, ListOfPossibleMoves),
     possible_move_representation(PossibleMove),
-    insert_multiple_matrix(PossibleMove, Board, ListOfPossibleMoves, DemoMatrix),
+    get_destinations(ListOfPossibleMoves, Destinations),
+    insert_multiple_matrix(PossibleMove, Board, Destinations, DemoMatrix),
     write_board(DemoMatrix),
     get Move asking 'Where to? ',
     readable_to_coordinates(Move, Row2-Col2),
-    Row2-Col2 in ListOfPossibleMoves.
+    Row1-Col1-Row2-Col2 in ListOfPossibleMoves.
 
 % TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-

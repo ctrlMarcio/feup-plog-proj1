@@ -11,45 +11,34 @@ Initial file, reponsible to start and keep the game running.
 :-include('util/operators.pl').
 :-include('util/util.pl').
 
-%!      play() is det.
-%
-%       True always.
-%
-%       @tbd
+% TODO
 play :-
-    write_header,
-    initial(InitialBoard),
-    first_player(FirstPlayer),
-    second_player(SecondPlayer),
-    initial_amount(Pieces),
-    abolish(state/2),
-    asserta(state(FirstPlayer, InitialBoard)),
-    abolish(pieces/2),
-    asserta(pieces(FirstPlayer, Pieces)),
-    asserta(pieces(SecondPlayer, Pieces)),
-    repeat,
-        state(Player, Board),
-        next_player(Player, NextPlayer),
-        pieces(NextPlayer, OpponentPieces),
-        display_game(Board),
-        ask_move(Board, Player, Row1-Col1, Row2-Col2),
-        move(Board, Row1-Col1, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces),
-        retract(state(Player, Board)),
-        asserta(state(NextPlayer, NewBoard)),
-        retract(pieces(NextPlayer, OpponentPieces)),
-        asserta(pieces(NextPlayer, NewOpponentPieces)),
-        game_over(Player, NewOpponentPieces, Winner),
-    % TODO show board
-    write(Winner), write(' ganhou ihihihiihih'), nl.
+    initial(GameState),
+    play(GameState).
 
-%!      initial(-GameState:list) is det.
-%
-%       Initializes the game state.
-%       True always
-%
-%       @arg GameState          the game state to initialize. A list of lists
-initial(GameState) :-
-    init_board(GameState).
+% TODO
+play(GameState) :-
+    game_over(GameState, Winner),
+    % TODO show board
+    write(Winner), write(' won ihihihiihih'), nl.
+
+play(GameState) :-
+    GameState = Board-Player-PlayerPieces-_, % its cleaner this way
+    repeat, % repeat the question in case the input is wrong
+        display_game(Board),
+        ask_move(Board, Player, Row1-Col1-Row2-Col2),
+        move(GameState, Row1-Col1-Row2-Col2, NewBoard-Player-PlayerPieces-NewOpponentPieces),
+        !,
+    next_player(Player, NextPlayer),
+    play(NewBoard-NextPlayer-NewOpponentPieces-PlayerPieces).
+
+% TODO
+initial(Board-Player-PlayerPieces-OpponentPieces) :-
+    write_header,
+    init_board(Board),
+    first_player(Player),
+    initial_amount(PlayerPieces),
+    initial_amount(OpponentPieces).
 
 %!      display_game(+GameState:list) is det.
 %
@@ -61,19 +50,17 @@ display_game(GameState) :-
     write_board(GameState).
 
 % TODO
-valid_moves(GameState, Player, Row-Col, ListOfMoves) :-
-    get_matrix(GameState, Row, Col, Piece), % gets the piece in the Row-Col position
-    color_value(Piece, Player, _),          % verifies if the piece belongs to the player
-    possible_moves(GameState, Row-Col, ListOfMoves).
+valid_moves(Board-_-_-_, Player, ListOfMoves) :-
+    all_valid_moves(Board, Player, 1-1, ListOfMoves), write(ListOfMoves).
 
 % TODO
-move(Board, Row1-Col1, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
+move(Board-Player-PlayerPieces-OpponentPieces, Row1-Col1-Row2-Col2, NewBoard-Player-PlayerPieces-NewOpponentPieces) :-
     % TODO verify move
     get_matrix(Board, Row1, Col1, Piece),
     insert_matrix(Piece, Board, Row2, Col2, Board1),
     clear_piece(Board1, Row1-Col1, Board2),
-    
+
     check_if_eats(Board2, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
 
-% TODO remove
-game_over(Player, 1, Player).
+% TODO
+game_over(_-Player-_-1, Player).
