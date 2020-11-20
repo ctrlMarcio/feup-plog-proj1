@@ -40,8 +40,8 @@ color_value('  ', '  ', _).
 
 initial_amount(8).
 
-:- op(800, xfy, on).
-:- op(700, xfx, is_of).
+:- op(700, xfy, on).
+:- op(600, xfx, is_of).
 Row-Col on Board is_of Player :-
   get_matrix(Board, Row, Col, Piece),
   color_value(Piece, Player, _).

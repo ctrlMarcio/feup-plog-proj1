@@ -92,3 +92,10 @@ insert_multiple_matrix(_, Matrix, [], Matrix).
 insert_multiple_matrix(Element, Matrix, [HR-HC|T], ResMatrix) :-
     insert_matrix(Element, Matrix, HR, HC, Matrix1),
     insert_multiple_matrix(Element, Matrix1, T, ResMatrix).
+
+% TODO
+transform_list([], _, []).
+transform_list([H|T], P, [H1|T1]) :-
+    Pred =.. [P, H, H1],
+    Pred,
+    transform_list(T, P, T1).

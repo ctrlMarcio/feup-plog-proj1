@@ -6,10 +6,11 @@ Initial file, reponsible to start and keep the game running.
 :-use_module(library(lists)).
 
 :-include('game.pl').
-:-include('io.pl').
 :-include('pieces.pl').
 :-include('util/operators.pl').
 :-include('util/util.pl').
+:-include('io/io.pl').
+:-include('io/menu.pl').
 
 % TODO
 play :-
@@ -60,7 +61,7 @@ move(Board-Player-PlayerPieces-OpponentPieces, Row1-Col1-Row2-Col2, NewBoard-Pla
     insert_matrix(Piece, Board, Row2, Col2, Board1),
     clear_piece(Board1, Row1-Col1, Board2),
 
-    check_if_eats(Board2, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
+    check_if_captures(Board2, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
 
 % TODO
 game_over(_-Player-_-1, Player).

@@ -153,5 +153,21 @@ get_move(Board, Player, ReadableCoordinates, Row1-Col1-Row2-Col2) :-
     Row1-Col1-Row2-Col2 in ListOfPossibleMoves.
 
 % TODO
+ask_capture_strength(Board, _, OpponentPieces, [], Board, OpponentPieces).
+ask_capture_strength(Board, OwnPosition, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces) :-
+    write_board(Board),
+    transform_list(ReadableList, readable_to_coordinates, LesserStrength),
+    ask_menu('Capture piece by strength?', ReadableList, Ans),
+    ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, Ans, NewBoard, NewOpponentPieces).
+
+ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, Ans, NewBoard, NewOpponentPieces) :-
+    Ans > 0,
+    nth1(Ans, LesserStrength, OpPosition),
+    clear_piece(Board, OpPosition, Board1),
+    NewOpponentPieces is OpponentPieces - 1,
+    lower_strength(Board1, OwnPosition, NewBoard).
+ask_capture_strength_index(Board, _, OpponentPieces, _, 0, Board, OpponentPieces).
+
+% TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-
     letter(Col, Cola).
