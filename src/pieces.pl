@@ -11,33 +11,32 @@ possible_move_representation('<>').
 
 % caves
 caves_row(5).
-left_cave('c1', 1, 1).
-left_cave('c0', 0, 1).
-large_cave('A1', 1, 5).
-large_cave('A0', 0, 5).
-right_cave('c1', 1, 9).
-right_cave('c0', 0, 9).
 
-small_cave(Piece, Value) :- left_cave(Piece, Value, _).
-small_cave(Piece, Value) :- right_cave(Piece, Value, _).
-large_cave(Piece, Value) :- large_cave(Piece, Value, 5).
+left_cave_col(1).
+middle_cave_col(5).
+right_cave_col(9).
+
+cave('c1', 1, 1).
+cave('c0', 0, 1).
+cave('A1', 1, 5).
+cave('A0', 0, 5).
+cave('c1', 1, 9).
+cave('c0', 0, 9).
+
+small_cave(Piece, Value) :- cave(Piece, Value, 1).
+small_cave(Piece, Value) :- cave(Piece, Value, 9).
+large_cave(Piece, Value) :- cave(Piece, Value, 5).
 
 cave(Piece, Value) :-
   small_cave(Piece, Value).
 cave(Piece, Value) :-
   large_cave(Piece, Value).
 
-cut_cave(Cave, NewCave) :-
-  small_cave(Cave, Number),
+cut_cave(Cave, Col, NewCave) :-
+  cave(Cave, Number, Col),
   Number > 0,
   Number1 is Number - 1,
-  small_cave(NewCave, Number1).
-
-cut_cave(Cave, NewCave) :-
-  large_cave(Cave, Number),
-  Number > 0,
-  Number1 is Number - 1,
-  large_cave(NewCave, Number1).
+  cave(NewCave, Number1, Col).
 
 % TODO
 object(Piece) :-
@@ -73,8 +72,8 @@ large_dragon(Player, Piece) :-
 
 initial_amount(8).
 
-:- op(600, xfy, on).
-:- op(500, xfx, is_of).
+:- op(800, xfy, on).
+:- op(700, xfx, is_of).
 Row-Col on Board is_of Player :-
   get_matrix(Board, Row, Col, Piece),
   color_value(Piece, Player, _).

@@ -88,10 +88,29 @@ check_if_captures(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentP
     ask_capture_strength(Board4, Row-Col, OPieces4, LS, NewBoard, NewOpponentPieces).
 
 summon_dragon(Board, Row-Col, Player, PlayerPieces, Caves, NewBoard, NewPlayerPieces, NewCaves) :-
-    check_if_summons_dragon(Board, Row-Col, Player, CaveRow-CaveCol),
+    check_if_summons_dragon(Board, Row-Col, Player, CaveRow-CaveCol), !,
+    % trace,
     create_dragon(Board, Player, CaveRow-CaveCol, Caves, NewCaves, NewBoard),
     NewPlayerPieces is PlayerPieces + 1.
 summon_dragon(Board, _, _, PlayerPieces, Caves, Board, PlayerPieces, Caves).
+
+% TODO
+reset_caves(Board, Row-Col, Cave-_-_, NewBoard) :-
+    caves_row(Row),
+    left_cave_col(Col), !,
+    insert_matrix(Cave, Board, Row, Col, NewBoard).
+
+reset_caves(Board, Row-Col, _-Cave-_, NewBoard) :-
+    caves_row(Row),
+    middle_cave_col(Col), !,
+    insert_matrix(Cave, Board, Row, Col, NewBoard).
+
+reset_caves(Board, Row-Col, _-_-Cave, NewBoard) :-
+    caves_row(Row),
+    right_cave_col(Col), !,
+    insert_matrix(Cave, Board, Row, Col, NewBoard).
+
+reset_caves(Board, _, _, Board).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  Private predicates below  %%%
@@ -100,27 +119,30 @@ summon_dragon(Board, _, _, PlayerPieces, Caves, Board, PlayerPieces, Caves).
 % TODO
 create_dragon(Board, Player, Row-Col, Caves, NewCaves, NewBoard) :-
     get_matrix(Board, Row, Col, Cave),
-    small_cave(Cave, _),
+    small_cave(Cave, _), !,
     small_dragon(Player, Piece),
     insert_matrix(Piece, Board, Row, Col, NewBoard),
-    update_caves(Cave, Caves, NewCaves).
+    update_caves(Cave, Col, Caves, NewCaves).
 
 create_dragon(Board, Player, Row-Col, Caves, NewCaves, NewBoard) :-
     get_matrix(Board, Row, Col, Cave),
     large_cave(Cave, _),
     large_dragon(Player, Piece),
     insert_matrix(Piece, Board, Row, Col, NewBoard),
-    update_caves(Cave, Caves, NewCaves).
+    update_caves(Cave, Col, Caves, NewCaves).
 
 % TODO
-update_caves(CaveL, CaveL-CaveM-CaveR, NewCaveL-CaveM-CaveR) :-
-    cut_cave(CaveL, NewCaveL).
+update_caves(CaveL, Col, CaveL-CaveM-CaveR, NewCaveL-CaveM-CaveR) :-
+    left_cave_row(Col), !,
+    cut_cave(CaveL, Col, NewCaveL).
 
-update_caves(CaveM, CaveL-CaveM-CaveR, CaveL-NewCaveM-CaveR) :-
-    cut_cave(CaveM, NewCaveM).
+update_caves(CaveM, Col, CaveL-CaveM-CaveR, CaveL-NewCaveM-CaveR) :-
+    middle_cave_row(Col), !,
+    cut_cave(CaveM, Col, NewCaveM).
 
-update_caves(caveR, CaveL-CaveM-CaveR, CaveL-CaveM-NewCaveR) :-
-    cut_cave(CaveR, NewCaveR).
+update_caves(CaveR, Col, CaveL-CaveM-CaveR, CaveL-CaveM-NewCaveR) :-
+    right_cave_row(Col),
+    cut_cave(CaveR, Col, NewCaveR).
 
 % TODO
 check_if_summons_dragon(Board, Row-Col, Player, Row-CaveCol) :-

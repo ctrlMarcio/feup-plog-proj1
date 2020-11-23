@@ -25,14 +25,14 @@ play(GameState) :-
     write(Winner), write(' won ihihihiihih'), nl.
 
 play(GameState) :-
-    GameState = Board-Player-PlayerPieces-_-_-_-_, % its cleaner this way
+    GameState = Board-Player-_-_-_-_-_, % its cleaner this way
     repeat, % repeat the question in case the input is wrong
         display_game(Board),
         ask_move(Board, Player, Rowi-Coli-Rowf-Colf),
-        move(GameState, Rowi-Coli-Rowf-Colf, NewBoard-Player-PlayerPieces-NewOpponentPieces-NewCaveL-NewCaveM-NewCaveR),
+        move(GameState, Rowi-Coli-Rowf-Colf, NewBoard-Player-NewPlayerPieces-NewOpponentPieces-NewCaveL-NewCaveM-NewCaveR),
         !,
     next_player(Player, NextPlayer),
-    play(NewBoard-NextPlayer-NewOpponentPieces-PlayerPieces-NewCaveL-NewCaveM-NewCaveR).
+    play(NewBoard-NextPlayer-NewOpponentPieces-NewPlayerPieces-NewCaveL-NewCaveM-NewCaveR).
 
 % TODO
 initial(Board-Player-PlayerPieces-OpponentPieces-CaveL-CaveM-CaveR) :-
@@ -40,9 +40,9 @@ initial(Board-Player-PlayerPieces-OpponentPieces-CaveL-CaveM-CaveR) :-
     first_player(Player),
     initial_amount(PlayerPieces),
     initial_amount(OpponentPieces),
-    left_cave(CaveL, 1, 1),
-    large_cave(CaveM, 1, 5),
-    right_cave(CaveR, 1, 9).
+    cave(CaveL, 1, 1),
+    cave(CaveM, 1, 5),
+    cave(CaveR, 1, 9).
 
 %!      display_game(+GameState:list) is det.
 %
@@ -65,7 +65,8 @@ move(Board-Player-PlayerPieces-OpponentPieces-CaveL-CaveM-CaveR, Row1-Col1-Row2-
     clear_piece(Board1, Row1-Col1, Board2),
 
     check_if_captures(Board2, Row2-Col2, Player, OpponentPieces, Board3, NewOpponentPieces),
-    summon_dragon(Board3, Row2-Col2, Player, PlayerPieces, CaveL-CaveM-CaveR, NewBoard, NewPlayerPieces, NewCaveL-NewCaveM-NewCaveR).
+    summon_dragon(Board3, Row2-Col2, Player, PlayerPieces, CaveL-CaveM-CaveR, Board4, NewPlayerPieces, NewCaveL-NewCaveM-NewCaveR),
+    reset_caves(Board4, Row1-Col1, CaveL-CaveM-CaveR, NewBoard).
 
 % TODO
 game_over(_-Player-_-1-_-_, Player).
