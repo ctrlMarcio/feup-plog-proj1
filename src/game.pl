@@ -87,9 +87,82 @@ check_if_captures(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentP
     capture_surrounded_right(Board3, Row-Col, Piece, Player, OPieces3, LS3, Board4, OPieces4, LS),
     ask_capture_strength(Board4, Row-Col, OPieces4, LS, NewBoard, NewOpponentPieces).
 
+summon_dragon(Board, Row-Col, Player, PlayerPieces, Caves, NewBoard, NewPlayerPieces, NewCaves) :-
+    check_if_summons_dragon(Board, Row-Col, Player, CaveRow-CaveCol),
+    create_dragon(Board, Player, CaveRow-CaveCol, Caves, NewCaves, NewBoard),
+    NewPlayerPieces is PlayerPieces + 1.
+summon_dragon(Board, _, _, PlayerPieces, Caves, Board, PlayerPieces, Caves).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  Private predicates below  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TODO
+create_dragon(Board, Player, Row-Col, Caves, NewCaves, NewBoard) :-
+    get_matrix(Board, Row, Col, Cave),
+    small_cave(Cave, _),
+    small_dragon(Player, Piece),
+    insert_matrix(Piece, Board, Row, Col, NewBoard),
+    update_caves(Cave, Caves, NewCaves).
+
+create_dragon(Board, Player, Row-Col, Caves, NewCaves, NewBoard) :-
+    get_matrix(Board, Row, Col, Cave),
+    large_cave(Cave, _),
+    large_dragon(Player, Piece),
+    insert_matrix(Piece, Board, Row, Col, NewBoard),
+    update_caves(Cave, Caves, NewCaves).
+
+% TODO
+update_caves(CaveL, CaveL-CaveM-CaveR, NewCaveL-CaveM-CaveR) :-
+    cut_cave(CaveL, NewCaveL).
+
+update_caves(CaveM, CaveL-CaveM-CaveR, CaveL-NewCaveM-CaveR) :-
+    cut_cave(CaveM, NewCaveM).
+
+update_caves(caveR, CaveL-CaveM-CaveR, CaveL-CaveM-NewCaveR) :-
+    cut_cave(CaveR, NewCaveR).
+
+% TODO
+check_if_summons_dragon(Board, Row-Col, Player, Row-CaveCol) :-
+    CaveCol is Col + 1,
+    get_matrix(Board, Row, CaveCol, Piece),
+    cave(Piece, 1),
+    surrounded_by(Board, Row-CaveCol, Player).
+
+check_if_summons_dragon(Board, Row-Col, Player, Row-CaveCol) :-
+    CaveCol is Col - 1,
+    get_matrix(Board, Row, CaveCol, Piece),
+    cave(Piece, 1),
+    surrounded_by(Board, Row-CaveCol, Player).
+
+check_if_summons_dragon(Board, Row-Col, Player, CaveRow-Col) :-
+    CaveRow is Row - 1,
+    get_matrix(Board, CaveRow, Col, Piece),
+    cave(Piece, 1),
+    surrounded_by(Board, CaveRow-Col, Player).
+
+check_if_summons_dragon(Board, Row-Col, Player, CaveRow-Col) :-
+    CaveRow is Row + 1,
+    get_matrix(Board, CaveRow, Col, Piece),
+    cave(Piece, 1),
+    surrounded_by(Board, CaveRow-Col, Player).
+
+% TODO    
+surrounded_by(Board, Row-Col, Player) :-
+    ColUp is Col + 1,
+    ColDown is Col - 1,
+    RowLeft is Row - 1,
+    RowRight is Row + 1,
+
+    \+is_clear(Board, Row-ColUp, Player),
+    \+is_clear(Board, Row-ColDown, Player),
+    \+is_clear(Board, RowLeft-Col, Player),
+    \+is_clear(Board, RowRight-Col, Player).
+
+is_clear(Board, Row-Col, Player) :-
+    get_matrix(Board, Row, Col, Piece),
+
+    \+color_value(Piece, Player, _).
 
 % TODO
 possible_moves_up(Board, Row1-Col1, Row-Col, List) :-
@@ -183,6 +256,7 @@ init_middle_row(Row) :-
     small_cave(SC, 1),
     large_cave(LC, 1),
     empty(Empty),
+
     Row1 = [SC],
 
     board_width(Width),
