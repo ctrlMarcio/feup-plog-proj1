@@ -169,5 +169,24 @@ ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, A
 ask_capture_strength_index(Board, _, OpponentPieces, _, 0, Board, OpponentPieces).
 
 % TODO
+initial_menu :-
+    write_header,
+    ask_player_number(PlayerNumber),
+    ask_player_type(PlayerType),
+    set_choice(PlayerNumber, PlayerType).
+
+ask_player_number(PlayerNumber) :-
+    player1(Player1),
+    player2(Player2),
+    PNumbers = [Player1, Player2],
+    ask_menu('Configure players', PNumbers, Player), % TODO treat 0
+    nth1(Player, PNumbers, PlayerNumber).
+
+ask_player_type(Type) :-
+    players(PlayerTypes),
+    ask_menu('Choose player', PlayerTypes, Index), % TODO treat 0
+    nth1(Index, PlayerTypes, Type).
+
+% TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-
     letter(Col, Cola).

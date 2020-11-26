@@ -7,6 +7,7 @@ Initial file, reponsible to start and keep the game running.
 
 :-include('game.pl').
 :-include('pieces.pl').
+:-include('players.pl').
 :-include('util/operators.pl').
 :-include('util/util.pl').
 :-include('io/io.pl').
@@ -14,7 +15,11 @@ Initial file, reponsible to start and keep the game running.
 
 % TODO
 play :-
-    write_header,
+    player('Player 1', X),
+    write(X), nl,
+    initial_menu,
+    player('Player 1', Y),
+    write(Y), nl,
     initial(GameState),
     play(GameState).
 
