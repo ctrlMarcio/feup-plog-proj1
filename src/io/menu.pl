@@ -1,56 +1,58 @@
 % TODO
+
 ask_menu(Options, AnswerIndex) :-
   repeat,
-    nl, write_options(Options, 1),
-    write_default_option, nl,
-    write_prompt,
-    readln Index,
-    verify_answer(Options, Index, AnswerIndex), !.
+  ask_options(Options, AnswerIndex), !.
 
 ask_menu_question(Options, AnswerIndex, Question) :-
   repeat,
-    nl, write(Question), nl, nl,
-    write_options(Options, 1),
-    write_default_option, nl,
-    write_prompt,
-    readln Index,
-    verify_answer(Options, Index, AnswerIndex), !.
+  write_question(Question),
+  ask_options(Options, AnswerIndex), !.
+
+ask_menu_default(Options, AnswerIndex, Default) :-
+  repeat,
+  ask_options_default(Options, AnswerIndex, Default), !.
 
 ask_menu_default_question(Options, AnswerIndex, Default, Question) :-
   repeat,
-    nl, write(Question), nl, nl,
-    write_options(Options, 1),
-    write_default_option(Default), nl,
-    write_prompt,
-    readln Index,
-    verify_answer(Options, Index, AnswerIndex), !.
+  write_question(Question),
+  ask_options_default(Options, AnswerIndex, Default), !.
 
 ask_menu_default_prefix(Options, AnswerIndex, Default, Prefix) :-
   asserta(prefix(Prefix)),
   repeat,
-    nl, write_options(Options, 1),
-    write_default_option(Default), nl,
-    write_prompt,
-    readln Index,
-    verify_answer(Options, Index, AnswerIndex), !,
-    retract(prefix(Prefix)).
+    ask_menu_default(Options, AnswerIndex, Default), !,
+  retract(prefix(Prefix)).
 
 ask_menu_question_prefix(Options, AnswerIndex, Question, Prefix) :-
   asserta(prefix(Prefix)),
   repeat,
-    nl, write(Prefix), write(Question), nl, nl,
-    write_options(Options, 1),
-    write_default_option, nl,
-    write_prompt,
-    readln Index,
-    verify_answer(Options, Index, AnswerIndex), !,
-    retract(prefix(Prefix)).
+  write_question(Question),
+  ask_options(Options, AnswerIndex), !,
+  retract(prefix(Prefix)).
 
 %%%% PRIVATE BELOW
 
 :- dynamic(prefix/1).
 
 prefix(' ').
+
+ask_options(Options, AnswerIndex) :-
+  nl, write_options(Options, 1),
+  write_default_option, nl,
+  write_prompt,
+  readln Index,
+  verify_answer(Options, Index, AnswerIndex).
+
+ask_options_default(Options, AnswerIndex, Default) :-
+  nl, write_options(Options, 1),
+  write_default_option(Default), nl,
+  write_prompt,
+  readln Index,
+  verify_answer(Options, Index, AnswerIndex).
+
+write_question(Question) :-
+  nl, write(Question), nl.
 
 % TODO
 write_options([], _).

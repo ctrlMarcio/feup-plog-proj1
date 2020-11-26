@@ -72,8 +72,8 @@ large_dragon(Player, Piece) :-
 
 initial_amount(8).
 
-:- op(800, xfy, on).
-:- op(750, xfx, is_of).
+:- op(800, xfx, is_of).
+:- op(700, xfx, on).
 Row-Col on Board is_of Player :-
   get_matrix(Board, Row, Col, Piece),
   color_value(Piece, Player, _).

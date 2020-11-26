@@ -21,7 +21,7 @@ initial_options_menu(Option) :-
     Options = [Opt1, Opt2],
 
     write_header,
-    ask_menu_default_prefix(Options, Option, 'Play', '\t\t\t').
+    ask_menu_default_prefix(Options, Option, 'Play', '\t\t\t\t\t').
 
 process_initial_option(0).
 process_initial_option(Player) :-

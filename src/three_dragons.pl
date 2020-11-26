@@ -4,10 +4,13 @@ Initial file, reponsible to start and keep the game running.
 */
 
 :-use_module(library(lists)).
+:- use_module(library(random)).
 
 :-include('game.pl').
 :-include('pieces.pl').
 :-include('players.pl').
+:-include('game_state.pl').
+:-include('minimax.pl').
 :-include('util/operators.pl').
 :-include('util/util.pl').
 :-include('io/io.pl').
@@ -22,29 +25,38 @@ play :-
 
 % TODO
 play(GameState) :-
+    game_state(GameState, opponent_pieces, OpponentPieces),
+    write(OpponentPieces), nl, nl,
     game_over(GameState, Winner), !,
     % TODO show board
+    game_state(GameState, board, Board),
+    display_game(Board),
     write(Winner), write(' won ihihihiihih'), nl.
 
 play(GameState) :-
-    GameState = Board-Player-_-_-_-_-_, % its cleaner this way
+    game_state(GameState, board, Board),
+    game_state(GameState, current_player, Player),
     repeat, % repeat the question in case the input is wrong
         display_game(Board),
-        ask_move(Board, Player, Rowi-Coli-Rowf-Colf),
-        move(GameState, Rowi-Coli-Rowf-Colf, NewBoard-Player-NewPlayerPieces-NewOpponentPieces-NewCaveL-NewCaveM-NewCaveR),
+        % ask_move(Board, Player, Rowi-Coli-Rowf-Colf),
+        choose_move(GameState, Player, 1, Rowi-Coli-Rowf-Colf),
+        move(GameState, Rowi-Coli-Rowf-Colf, GameState1),
         !,
     next_player(Player, NextPlayer),
-    play(NewBoard-NextPlayer-NewOpponentPieces-NewPlayerPieces-NewCaveL-NewCaveM-NewCaveR).
+    game_state(GameState1, [player_pieces-OpponentPieces, opponent_pieces-PlayerPieces]),
+    set_game_state(GameState1, [current_player-NextPlayer, player_pieces-PlayerPieces, opponent_pieces-OpponentPieces], NewGameState),
+    play(NewGameState).
 
 % TODO
-initial(Board-Player-PlayerPieces-OpponentPieces-CaveL-CaveM-CaveR) :-
+initial(GameState) :-
     init_board(Board),
     first_player(Player),
     initial_amount(PlayerPieces),
     initial_amount(OpponentPieces),
     cave(CaveL, 1, 1),
     cave(CaveM, 1, 5),
-    cave(CaveR, 1, 9).
+    cave(CaveR, 1, 9),
+    game_state_construct(Board, Player, PlayerPieces, OpponentPieces, CaveL, CaveM, CaveR, GameState).
 
 %!      display_game(+GameState:list) is det.
 %
@@ -57,19 +69,37 @@ display_game(GameState) :-
     write_board(GameState).
 
 % TODO
-valid_moves(Board-_-_-_, Player, ListOfMoves) :-
-    all_valid_moves(Board, Player, 1-1, ListOfMoves), write(ListOfMoves).
+valid_moves(GameState, Player, ListOfMoves) :-
+    game_state(GameState, board, Board),
+    game_state(GameState, current_player, Player),
+    all_valid_moves(Board, Player, 1-1, ListOfMoves).
 
 % TODO
-move(Board-Player-PlayerPieces-OpponentPieces-CaveL-CaveM-CaveR, Row1-Col1-Row2-Col2, NewBoard-Player-NewPlayerPieces-NewOpponentPieces-NewCaveL-NewCaveM-NewCaveR) :-
+move(GameState, Row1-Col1-Row2-Col2, NewGameState) :-
     % TODO verify move
+    game_state(GameState, [board-Board, current_player-Player, player_pieces-PlayerPieces, opponent_pieces-OpponentPieces, caves-Caves]),
+
     get_matrix(Board, Row1, Col1, Piece),
     insert_matrix(Piece, Board, Row2, Col2, Board1),
     clear_piece(Board1, Row1-Col1, Board2),
 
     check_if_captures(Board2, Row2-Col2, Player, OpponentPieces, Board3, NewOpponentPieces),
-    summon_dragon(Board3, Row2-Col2, Player, PlayerPieces, CaveL-CaveM-CaveR, Board4, NewPlayerPieces, NewCaveL-NewCaveM-NewCaveR),
-    reset_caves(Board4, Row1-Col1, CaveL-CaveM-CaveR, NewBoard).
+    summon_dragon(Board3, Row2-Col2, Player, PlayerPieces, Caves, Board4, NewPlayerPieces, NewCaveL-NewCaveM-NewCaveR),
+    reset_caves(Board4, Row1-Col1, Caves, NewBoard),
+
+    set_game_state(GameState, [opponent_pieces-NewOpponentPieces, player_pieces-NewPlayerPieces, cave_l-NewCaveL, cave_m-NewCaveM, cave_r-NewCaveR, board-NewBoard], NewGameState).
 
 % TODO
-game_over(_-Player-_-1-_-_, Player).
+value(GameState, Player, Value) :-
+    game_state(GameState, [current_player-Player, player_pieces-PlayerPieces, opponent_pieces-OpponentPieces]), !,
+    Value is PlayerPieces - OpponentPieces.
+value(GameState, _, Value) :-
+    game_state(GameState, [player_pieces-PlayerPieces, opponent_pieces-OpponentPieces]), !,
+    Value is OpponentPieces - PlayerPieces.
+
+choose_move(GameState, Player, Level, Move) :-
+    minimax(GameState, Player, Level, Move).
+
+% TODO
+game_over(GameState, Player) :-
+    game_state(GameState, [current_player-Player, opponent_pieces-1]).

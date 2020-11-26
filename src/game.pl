@@ -84,8 +84,8 @@ check_if_captures(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentP
     capture_surrounded_up(Board, Row-Col, Piece, Player, OpponentPieces, LesserStrength, Board1, OPieces1, LS1),
     capture_surrounded_down(Board1, Row-Col, Piece, Player, OPieces1, LS1, Board2, OPieces2, LS2),
     capture_surrounded_left(Board2, Row-Col, Piece, Player, OPieces2, LS2, Board3, OPieces3, LS3),
-    capture_surrounded_right(Board3, Row-Col, Piece, Player, OPieces3, LS3, Board4, OPieces4, LS),
-    ask_capture_strength(Board4, Row-Col, OPieces4, LS, NewBoard, NewOpponentPieces).
+    capture_surrounded_right(Board3, Row-Col, Piece, Player, OPieces3, LS3, NewBoard, NewOpponentPieces, LS).
+    % ask_capture_strength(Board4, Row-Col, OPieces4, LS, NewBoard, NewOpponentPieces).
 
 summon_dragon(Board, Row-Col, Player, PlayerPieces, Caves, NewBoard, NewPlayerPieces, NewCaves) :-
     check_if_summons_dragon(Board, Row-Col, Player, CaveRow-CaveCol), !,

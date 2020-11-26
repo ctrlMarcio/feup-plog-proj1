@@ -100,5 +100,12 @@ transform_list([H|T], P, [H1|T1]) :-
     Pred,
     transform_list(T, P, T1).
 
+% TODO
+update_value([], _, _, []).
+update_value([_|T], Value, 1, [Value|T]).
+update_value([H|T], Value, Index, [H|T1]) :-
+    Index1 is Index - 1,
+    update_value(T, Value, Index1, T1).
+
 cls :- write('\33\[2J').
 clear :- write('\33\[2J').
