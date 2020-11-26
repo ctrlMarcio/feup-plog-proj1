@@ -12,14 +12,11 @@ Initial file, reponsible to start and keep the game running.
 :-include('util/util.pl').
 :-include('io/io.pl').
 :-include('io/menu.pl').
+:-include('io/initial_menu.pl').
 
 % TODO
 play :-
-    player('Player 1', X),
-    write(X), nl,
     initial_menu,
-    player('Player 1', Y),
-    write(Y), nl,
     initial(GameState),
     play(GameState).
 
@@ -56,6 +53,7 @@ initial(Board-Player-PlayerPieces-OpponentPieces-CaveL-CaveM-CaveR) :-
 %
 %       @arg GameState          the game state to show. A list of list
 display_game(GameState) :-
+    write_header,
     write_board(GameState).
 
 % TODO

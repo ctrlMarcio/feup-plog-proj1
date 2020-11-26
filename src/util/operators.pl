@@ -19,12 +19,16 @@ get Answer asking Question :-
 
 ask_user(Question, Answer) :-
     write(Question), write(' '),
-    read(Answer).
+    readln Answer.
 
-:- op(800, xf, is_even).
+:- op(800, yf, is_even).
 X is_even :-
   even(X).
 
-:- op(800, xf, is_odd).
+:- op(800, yf, is_odd).
 X is_odd :-
   odd(X).
+
+:- op(800, fx, readln).
+readln X :-
+  read(X), skip_line.

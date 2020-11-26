@@ -99,3 +99,6 @@ transform_list([H|T], P, [H1|T1]) :-
     Pred =.. [P, H, H1],
     Pred,
     transform_list(T, P, T1).
+
+cls :- write('\33\[2J').
+clear :- write('\33\[2J').

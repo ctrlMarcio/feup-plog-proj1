@@ -8,6 +8,7 @@ Coordinates all operations that deal with reading and writing.
 %       Writes the header of the game.
 %       True always.
 write_header :-
+    clear,
     write('  _______ _                     _____                                                                               '), nl,
     write(' |__   __| |                   |  __ \\                                                                              '), nl,
     write('    | |  | |__  _ __ ___  ___  | |  | |_ __ __ _  __ _  ___  _ __  ___                                              '), nl,
@@ -157,7 +158,7 @@ ask_capture_strength(Board, _, OpponentPieces, [], Board, OpponentPieces).
 ask_capture_strength(Board, OwnPosition, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces) :-
     write_board(Board),
     transform_list(ReadableList, readable_to_coordinates, LesserStrength),
-    ask_menu('Capture piece by strength?', ReadableList, Ans),
+    ask_menu_question(ReadableList, Ans, 'Capture piece by strength?'),
     ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, Ans, NewBoard, NewOpponentPieces).
 
 ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, Ans, NewBoard, NewOpponentPieces) :-
@@ -167,25 +168,6 @@ ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, A
     NewOpponentPieces is OpponentPieces - 1,
     lower_strength(Board1, OwnPosition, NewBoard).
 ask_capture_strength_index(Board, _, OpponentPieces, _, 0, Board, OpponentPieces).
-
-% TODO
-initial_menu :-
-    write_header,
-    ask_player_number(PlayerNumber),
-    ask_player_type(PlayerType),
-    set_choice(PlayerNumber, PlayerType).
-
-ask_player_number(PlayerNumber) :-
-    player1(Player1),
-    player2(Player2),
-    PNumbers = [Player1, Player2],
-    ask_menu('Configure players', PNumbers, Player), % TODO treat 0
-    nth1(Player, PNumbers, PlayerNumber).
-
-ask_player_type(Type) :-
-    players(PlayerTypes),
-    ask_menu('Choose player', PlayerTypes, Index), % TODO treat 0
-    nth1(Index, PlayerTypes, Type).
 
 % TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-
