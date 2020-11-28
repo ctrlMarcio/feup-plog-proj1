@@ -154,20 +154,28 @@ get_move(Board, Player, ReadableCoordinates, Row1-Col1-Row2-Col2) :-
     Row1-Col1-Row2-Col2 in ListOfPossibleMoves.
 
 % TODO
-ask_capture_strength(Board, _, OpponentPieces, [], Board, OpponentPieces).
-ask_capture_strength(Board, OwnPosition, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces) :-
-    write_board(Board),
-    transform_list(ReadableList, readable_to_coordinates, LesserStrength),
-    ask_menu_question(ReadableList, Ans, 'Capture piece by strength?'),
-    ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, Ans, NewBoard, NewOpponentPieces).
+ask_capture_strength(GameState, Position, NewGameState) :-
+    get_surrounded_lower_strength(GameState, Position, List),
+    ask_strength_piece(GameState, Position, List, NewGameState).    
 
-ask_capture_strength_index(Board, OwnPosition, OpponentPieces, LesserStrength, Ans, NewBoard, NewOpponentPieces) :-
+ask_strength_piece(GameState, _, [], GameState).
+ask_strength_piece(GameState, Position, List, NewGameState) :-
+    game_state(GameState, board, Board),
+    write_board(Board),
+    transform_list(ReadableList, readable_to_coordinates, List),
+    ask_menu_question(ReadableList, Ans, 'Capture piece by strength?'),
+    remove_strength_asked(GameState, Position, Ans, ReadableList, NewGameState).
+
+remove_strength_asked(GameState, OwnPosition, Ans, ReadableList, NewGameState) :-
     Ans > 0,
-    nth1(Ans, LesserStrength, OpPosition),
-    clear_piece(Board, OpPosition, Board1),
+    nth1(Ans, ReadableList, ReadablePos),
+    readable_to_coordinates(ReadablePos, Pos),
+    game_state(GameState, [board-Board, opponent_pieces-OpponentPieces]),
+    clear_piece(Board, Pos, Board1),
     NewOpponentPieces is OpponentPieces - 1,
-    lower_strength(Board1, OwnPosition, NewBoard).
-ask_capture_strength_index(Board, _, OpponentPieces, _, 0, Board, OpponentPieces).
+    lower_strength(Board1, OwnPosition, NewBoard),
+    set_game_state(GameState, [board-NewBoard, opponent_pieces-NewOpponentPieces], NewGameState).
+remove_strength_asked(GameState, _, 0, _, GameState).
 
 % TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-

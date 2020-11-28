@@ -15,13 +15,13 @@ board_height(9).
 %
 %       @arg Board      the board to init. A list of lists
 init_board(Board) :-
-    second_player(Second),
+    player2(Second),
     init_board_half(Second, Half1),
 
     init_middle_row(MiddleRow),
     append(Half1, [MiddleRow], Board1),
 
-    first_player(First),
+    player1(First),
     init_board_half(First, Half2Reversed),
     reverse(Half2Reversed, Half2),
 
@@ -78,18 +78,15 @@ possible_moves(_, _, _, []).
 
 % TODO
 check_if_captures(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
-    LesserStrength = [],
     get_matrix(Board, Row, Col, Piece),
     % TODO remove player, Piece is enough
-    capture_surrounded_up(Board, Row-Col, Piece, Player, OpponentPieces, LesserStrength, Board1, OPieces1, LS1),
-    capture_surrounded_down(Board1, Row-Col, Piece, Player, OPieces1, LS1, Board2, OPieces2, LS2),
-    capture_surrounded_left(Board2, Row-Col, Piece, Player, OPieces2, LS2, Board3, OPieces3, LS3),
-    capture_surrounded_right(Board3, Row-Col, Piece, Player, OPieces3, LS3, NewBoard, NewOpponentPieces, LS).
-    % ask_capture_strength(Board4, Row-Col, OPieces4, LS, NewBoard, NewOpponentPieces).
+    capture_surrounded_up(Board, Row-Col, Piece, Player, OpponentPieces, Board1, OPieces1),
+    capture_surrounded_down(Board1, Row-Col, Piece, Player, OPieces1, Board2, OPieces2),
+    capture_surrounded_left(Board2, Row-Col, Piece, Player, OPieces2, Board3, OPieces3),
+    capture_surrounded_right(Board3, Row-Col, Piece, Player, OPieces3, NewBoard, NewOpponentPieces).
 
 summon_dragon(Board, Row-Col, Player, PlayerPieces, Caves, NewBoard, NewPlayerPieces, NewCaves) :-
     check_if_summons_dragon(Board, Row-Col, Player, CaveRow-CaveCol), !,
-    % trace,
     create_dragon(Board, Player, CaveRow-CaveCol, Caves, NewCaves, NewBoard),
     NewPlayerPieces is PlayerPieces + 1.
 summon_dragon(Board, _, _, PlayerPieces, Caves, Board, PlayerPieces, Caves).
@@ -361,41 +358,41 @@ clear_piece(Board, Row-Col, NewBoard) :-
     insert_matrix(EmptyCell, Board, Row, Col, NewBoard).
 
 % TODO
-capture_surrounded_up(Board, Row-Col, Piece, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength) :-
+capture_surrounded_up(Board, Row-Col, Piece, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
     Row1 is Row-1,
     Row2 is Row-2,
-    clear_surrounded_cell(Board, Piece, Row1-Col, Row2-Col, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength).
+    clear_surrounded_cell(Board, Piece, Row1-Col, Row2-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces).
 
-capture_surrounded_right(Board, Row-Col, Piece, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength) :-
+capture_surrounded_right(Board, Row-Col, Piece, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
     Col1 is Col+1,
     Col2 is Col+2,
-    clear_surrounded_cell(Board, Piece, Row-Col1, Row-Col2, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength).
+    clear_surrounded_cell(Board, Piece, Row-Col1, Row-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
 
-capture_surrounded_down(Board, Row-Col, Piece, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength) :-
+capture_surrounded_down(Board, Row-Col, Piece, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
     Row1 is Row+1,
     Row2 is Row+2,
-    clear_surrounded_cell(Board, Piece, Row1-Col, Row2-Col, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength).
+    clear_surrounded_cell(Board, Piece, Row1-Col, Row2-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces).
 
-capture_surrounded_left(Board, Row-Col, Piece, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength) :-
+capture_surrounded_left(Board, Row-Col, Piece, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
     Col1 is Col-1,
     Col2 is Col-2,
-    clear_surrounded_cell(Board, Piece, Row-Col1, Row-Col2, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength).
+    clear_surrounded_cell(Board, Piece, Row-Col1, Row-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
 
 % TODO
-clear_surrounded_cell(Board, OwnPiece, Row-Col, Row2-Col2, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength) :-
+clear_surrounded_cell(Board, OwnPiece, Row-Col, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
     next_player(Player, OtherPlayer),
     get_matrix(Board, Row, Col, OpPiece),
     color_value(OpPiece, OtherPlayer, _),
-    remove_piece(Board, OwnPiece, Row-Col, OpPiece, Row2-Col2, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, NewLesserStrength).
+    remove_piece(Board, OwnPiece, Row-Col, OpPiece, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces).
 
-clear_surrounded_cell(Board, _, _, _, _, OpponentPieces, LesserStrength, Board, OpponentPieces, LesserStrength).
+clear_surrounded_cell(Board, _, _, _, _, OpponentPieces, Board, OpponentPieces).
 
-remove_piece(Board, _, Row-Col, _, Row2-Col2, Player, OpponentPieces, LesserStrength, NewBoard, NewOpponentPieces, LesserStrength) :-
+remove_piece(Board, _, Row-Col, _, Row2-Col2, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
     get_matrix(Board, Row2, Col2, Piece2),
     (color_value(Piece2, Player, _) ; object(Piece2)), !,
     clear_piece(Board, Row-Col, NewBoard),
     NewOpponentPieces is OpponentPieces - 1.
-remove_piece(Board, OwnPiece, Row-Col, OpPiece, _, _, OpponentPieces, LesserStrength, Board, OpponentPieces, [Row-Col | LesserStrength]) :-
+remove_piece(Board, OwnPiece, _, OpPiece, _, _, OpponentPieces, Board, OpponentPieces) :-
     color_value(OwnPiece, _, OwnStrength),
     color_value(OpPiece, _, OpStrength),
     OwnStrength > OpStrength, !.
@@ -413,3 +410,33 @@ lower_strength(Board, Row-Col, NewBoard) :-
 get_destinations([], []).
 get_destinations([_-_-MR2-MC2 | MovesT], [MR2-MC2 | DestinationsT]) :-
     get_destinations(MovesT, DestinationsT).
+
+get_surrounded_lower_strength(GameState, Row-Col, List):-
+    game_state(GameState, board, Board),
+    get_matrix(Board, Row, Col, Piece),
+    color_value(Piece, _, Value),
+    
+    LeftCol is Col-1,
+    RightCol is Col+1,
+    TopRow is Row + 1,
+    BottomRow is Row - 1,
+
+    push_matrix_element(Board, Row-LeftCol, [], L1),
+    push_matrix_element(Board, Row-RightCol, L1, L2),
+    push_matrix_element(Board, TopRow-Col, L2, L3),
+    push_matrix_element(Board, BottomRow-Col, L3, AuxList),
+
+    less_than(AuxList, GameState, Value, List).
+
+less_than([], _, _, []).
+less_than([Row-Col|T1], GameState, Value, [Row-Col|T2] ) :-
+    game_state(GameState, [board-Board, current_player-Current]),
+    next_player(Current, Opponent),
+    get_matrix(Board, Row, Col, Piece),
+    color_value(Piece, Opponent, PieceValue),
+    PieceValue < Value,
+    less_than(T1, GameState,Value, T2).
+less_than([_|T], GameState, Value, List):-
+    less_than(T, GameState, Value, List).
+
+

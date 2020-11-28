@@ -46,9 +46,6 @@ object(Piece) :-
 
 /* Playable pieces */
 
-first_player(x).
-second_player(o).
-
 next_player(x, o).
 next_player(o, x).
 

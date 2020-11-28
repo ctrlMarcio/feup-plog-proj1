@@ -12,7 +12,7 @@ Temporary file reponsible for the intermediate demonstration in a PLOG class @ F
 show_intermediate_state :-
     write_header,
     inter1_state(GameState),
-    first_player(Player),
+    player1(Player),
     display_game(GameState).
 
 %!      inter1_state(-GameState:list) is det.

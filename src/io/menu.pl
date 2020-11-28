@@ -52,7 +52,7 @@ ask_options_default(Options, AnswerIndex, Default) :-
   verify_answer(Options, Index, AnswerIndex).
 
 write_question(Question) :-
-  nl, write(Question), nl.
+  nl, prefix(P), write(P), write(Question), nl.
 
 % TODO
 write_options([], _).

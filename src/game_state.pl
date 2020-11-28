@@ -12,7 +12,7 @@ game_state_construct(Board, Player, PlayerPieces, OpponentPieces, CaveL, CaveM, 
     set_game_state(GS7, cave_r, CaveR, GameState).
 
 game_state(GameState, Attribute, Value) :-
-    F =.. [Attribute, GameState, Value, _], F.
+    F =.. [Attribute, GameState, Value, _], F, !.
 
 game_state(_, []).
 game_state(GameState, [H-V|T]) :-

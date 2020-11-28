@@ -10,13 +10,15 @@ initial_options_menu(Option) :-
     player2(Player2),
 
     player(Player1, Type1),
+    player_type(Name1, Type1),
     player(Player2, Type2),
+    player_type(Name2, Type2),
 
     atom_concat(Player1, ' - ', P1),
-    atom_concat(P1, Type1, Opt1),
+    atom_concat(P1, Name1, Opt1),
 
     atom_concat(Player2, ' - ', P2),
-    atom_concat(P2, Type2, Opt2),
+    atom_concat(P2, Name2, Opt2),
 
     Options = [Opt1, Opt2],
 
@@ -36,5 +38,5 @@ process_initial_option(Player) :-
 ask_player_type(Type) :-
     write_header,
     players(PlayerTypes),
-    ask_menu_question_prefix(PlayerTypes, Index, 'Choose player', '\t\t\t'), % TODO treat 0
+    ask_menu_question_prefix(PlayerTypes, Index, 'Choose player', '\t\t\t\t\t'), % TODO treat 0
     nth1(Index, PlayerTypes, Type).

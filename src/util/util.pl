@@ -107,5 +107,9 @@ update_value([H|T], Value, Index, [H|T1]) :-
     Index1 is Index - 1,
     update_value(T, Value, Index1, T1).
 
+push_matrix_element(Matrix, Row-Col, List, [Row-Col|List]) :-
+    get_matrix(Matrix, Row, Col, _).
+push_matrix_element(_, _, List, List).
+
 cls :- write('\33\[2J').
 clear :- write('\33\[2J').

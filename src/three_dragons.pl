@@ -25,10 +25,7 @@ play :-
 
 % TODO
 play(GameState) :-
-    game_state(GameState, opponent_pieces, OpponentPieces),
-    write(OpponentPieces), nl, nl,
     game_over(GameState, Winner), !,
-    % TODO show board
     game_state(GameState, board, Board),
     display_game(Board),
     write(Winner), write(' won ihihihiihih'), nl.
@@ -38,9 +35,7 @@ play(GameState) :-
     game_state(GameState, current_player, Player),
     repeat, % repeat the question in case the input is wrong
         display_game(Board),
-        % ask_move(Board, Player, Rowi-Coli-Rowf-Colf),
-        choose_move(GameState, Player, 1, Rowi-Coli-Rowf-Colf),
-        move(GameState, Rowi-Coli-Rowf-Colf, GameState1),
+        get_move(GameState, GameState1),
         !,
     next_player(Player, NextPlayer),
     game_state(GameState1, [player_pieces-OpponentPieces, opponent_pieces-PlayerPieces]),
@@ -50,7 +45,7 @@ play(GameState) :-
 % TODO
 initial(GameState) :-
     init_board(Board),
-    first_player(Player),
+    player1(Player),
     initial_amount(PlayerPieces),
     initial_amount(OpponentPieces),
     cave(CaveL, 1, 1),
@@ -73,6 +68,22 @@ valid_moves(GameState, Player, ListOfMoves) :-
     game_state(GameState, board, Board),
     game_state(GameState, current_player, Player),
     all_valid_moves(Board, Player, 1-1, ListOfMoves).
+
+% TODO
+% human
+get_move(GameState, NewGameState) :-
+    game_state(GameState, [board-Board, current_player-Player]),
+    human(Level),
+    player(Player, Level), !,
+    ask_move(Board, Player, Rowi-Coli-Rowf-Colf),
+    move(GameState, Rowi-Coli-Rowf-Colf, GameState1),
+    ask_capture_strength(GameState1, Rowf-Colf, NewGameState).
+
+get_move(GameState, NewGameState) :-
+    game_state(GameState, [current_player-Player]),
+    player(Player, Level),
+    choose_move(GameState, Player, Level, Move),
+    move(GameState, Move, NewGameState).
 
 % TODO
 move(GameState, Row1-Col1-Row2-Col2, NewGameState) :-
