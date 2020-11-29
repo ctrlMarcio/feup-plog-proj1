@@ -130,15 +130,15 @@ create_dragon(Board, Player, Row-Col, Caves, NewCaves, NewBoard) :-
 
 % TODO
 update_caves(CaveL, Col, CaveL-CaveM-CaveR, NewCaveL-CaveM-CaveR) :-
-    left_cave_row(Col), !,
+    left_cave_col(Col), !,
     cut_cave(CaveL, Col, NewCaveL).
 
 update_caves(CaveM, Col, CaveL-CaveM-CaveR, CaveL-NewCaveM-CaveR) :-
-    middle_cave_row(Col), !,
+    middle_cave_col(Col), !,
     cut_cave(CaveM, Col, NewCaveM).
 
 update_caves(CaveR, Col, CaveL-CaveM-CaveR, CaveL-CaveM-NewCaveR) :-
-    right_cave_row(Col),
+    right_cave_col(Col),
     cut_cave(CaveR, Col, NewCaveR).
 
 % TODO
@@ -400,6 +400,7 @@ remove_piece(Board, OwnPiece, _, OpPiece, _, _, OpponentPieces, Board, OpponentP
 % TODO
 lower_strength(Board, Row-Col, NewBoard) :-
     get_matrix(Board, Row, Col, Piece),
+    \+empty(Piece),
     color_value(Piece, Player, Strength),
     Strength > 1,
     NewStrength is Strength - 1,

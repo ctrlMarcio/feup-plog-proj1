@@ -170,12 +170,15 @@ remove_strength_asked(GameState, OwnPosition, Ans, ReadableList, NewGameState) :
     Ans > 0,
     nth1(Ans, ReadableList, ReadablePos),
     readable_to_coordinates(ReadablePos, Pos),
+    actually_remove_strength(GameState, OwnPosition, Pos, NewGameState).
+remove_strength_asked(GameState, _, 0, _, GameState).
+
+actually_remove_strength(GameState, OwnPosition, Pos, NewGameState) :-
     game_state(GameState, [board-Board, opponent_pieces-OpponentPieces]),
     clear_piece(Board, Pos, Board1),
     NewOpponentPieces is OpponentPieces - 1,
     lower_strength(Board1, OwnPosition, NewBoard),
     set_game_state(GameState, [board-NewBoard, opponent_pieces-NewOpponentPieces], NewGameState).
-remove_strength_asked(GameState, _, 0, _, GameState).
 
 % TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-

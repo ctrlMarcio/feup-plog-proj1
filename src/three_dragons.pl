@@ -5,6 +5,7 @@ Initial file, reponsible to start and keep the game running.
 
 :-use_module(library(lists)).
 :- use_module(library(random)).
+:- use_module(library(system)).
 
 :-include('game.pl').
 :-include('pieces.pl').
@@ -82,12 +83,10 @@ get_move(GameState, NewGameState) :-
 get_move(GameState, NewGameState) :-
     game_state(GameState, [current_player-Player]),
     player(Player, Level),
-    choose_move(GameState, Player, Level, Move),
-    move(GameState, Move, NewGameState).
+    choose_move(GameState, Player, Level, NewGameState).
 
 % TODO
 move(GameState, Row1-Col1-Row2-Col2, NewGameState) :-
-    % TODO verify move
     game_state(GameState, [board-Board, current_player-Player, player_pieces-PlayerPieces, opponent_pieces-OpponentPieces, caves-Caves]),
 
     get_matrix(Board, Row1, Col1, Piece),
