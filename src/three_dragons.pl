@@ -4,19 +4,20 @@ Initial file, reponsible to start and keep the game running.
 */
 
 :-use_module(library(lists)).
-:- use_module(library(random)).
-:- use_module(library(system)).
+:-use_module(library(random)).
+:-use_module(library(system)).
 
-:-include('game.pl').
-:-include('pieces.pl').
-:-include('players.pl').
-:-include('game_state.pl').
-:-include('minimax.pl').
 :-include('util/operators.pl').
 :-include('util/util.pl').
+:-include('game/game.pl').
+:-include('game/game_state.pl').
+:-include('game/bot.pl').
+:-include('io/board.pl').
 :-include('io/io.pl').
-:-include('io/menu.pl').
 :-include('io/initial_menu.pl').
+:-include('io/menu.pl').
+:-include('settings/pieces.pl').
+:-include('settings/players.pl').
 
 % TODO
 play :-
@@ -29,7 +30,7 @@ play(GameState) :-
     game_over(GameState, Winner), !,
     game_state(GameState, board, Board),
     display_game(Board),
-    write(Winner), write(' won ihihihiihih'), nl.
+    write_winner(Winner).
 
 play(GameState) :-
     game_state(GameState, board, Board),
@@ -67,7 +68,6 @@ display_game(GameState) :-
 % TODO
 valid_moves(GameState, Player, ListOfMoves) :-
     game_state(GameState, board, Board),
-    game_state(GameState, current_player, Player),
     all_valid_moves(Board, Player, 1-1, ListOfMoves).
 
 % TODO
@@ -83,7 +83,9 @@ get_move(GameState, NewGameState) :-
 get_move(GameState, NewGameState) :-
     game_state(GameState, [current_player-Player]),
     player(Player, Level),
-    choose_move(GameState, Player, Level, NewGameState).
+    choose_move(GameState, Player, Level, NewGameState),
+    format('~a played~nInput something to continue', [Player]),
+    readln _, nl, nl.
 
 % TODO
 move(GameState, Row1-Col1-Row2-Col2, NewGameState) :-
@@ -105,10 +107,10 @@ value(GameState, Player, Value) :-
     Value is PlayerPieces - OpponentPieces.
 value(GameState, _, Value) :-
     game_state(GameState, [player_pieces-PlayerPieces, opponent_pieces-OpponentPieces]), !,
-    Value is OpponentPieces - PlayerPieces.
+    Value is PlayerPieces - OpponentPieces.
 
 choose_move(GameState, Player, Level, Move) :-
-    minimax(GameState, Player, Level, Move).
+    minimax(GameState, Player, Player, Level, _, Move).
 
 % TODO
 game_over(GameState, Player) :-

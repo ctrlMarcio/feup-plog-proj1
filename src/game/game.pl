@@ -51,8 +51,8 @@ all_valid_moves(_, _, Row-_, []) :-
     Row > Height.
 all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
     Col1 is Col + 1,
-    board_height(Height),
-    Col1 =< Height, !,
+    board_width(Width),
+    Col1 =< Width, !,
     possible_moves(Board, Player, Row-Col, List1),
     all_valid_moves(Board, Player, Row-Col1, List2),
     append(List1, List2, ListOfMoves).
@@ -73,7 +73,7 @@ possible_moves(Board, Player, Row-Col, List) :-
     append(List1, ListDown, List2),
     append(List2, ListLeft, List3),
     delete(List3, Row-Col-Row-Col, List4),  % deletes self position
-    sort(List4, List).                 % sort removes duplicates uwu
+    sort(List4, List).                 % sort removes duplicates 
 possible_moves(_, _, _, []).
 
 % TODO

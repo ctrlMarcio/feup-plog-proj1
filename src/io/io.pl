@@ -22,124 +22,12 @@ write_header :-
     write(' |_|  |_|\\__,_|_|  \\___|_|\\___/   \\___/\\/ |______\\___|\\___/|_| |_|\\___/|_|    |______|_|_| |_| |_|_|\\__\\___|\\__,_(_)'), nl,
     nl, nl.
 
-%!      write_board(+Board:list) is det.
-%
-%       Writes a horizontal border, followed by the actual board (game state) and the next player.
-%       True when the board is well defined.
-%
-%       @arg Board          the board to be written
-write_board(Board) :-
-    write_border,
-    board_height(Rows),
-    write_pieces(Board, Rows),
-    write_columns_names(1).
-
-%!      write_end_board(+Board:list, +Winner) is det.
-%
-%       Writes a horizontal border, followed by the actual board (game state) and and indication to the winner of the
-%       game.
-%       True when the board is well defined.
-%
-%       @arg Board          the board to be written
-%       @arg Winner         the winner of the game
-write_end_board(Board, Winner) :-
-    write_border,
-    board_height(Rows),
-    write_pieces(Board, Rows),
-    write_winner(Winner).
-
 % TODO
 ask_move(Board, Player, Row1-Col1-Row2-Col2) :-
     write_next_player(Player),
-    get PiecePosition asking 'What piece will you move?\nExample: a-1: ',
+    board_prefix(P), write(P),
+    get PiecePosition asking 'What piece will you move?\n\t\t\tExample: a-1: ',
     get_move(Board, Player, PiecePosition, Row1-Col1-Row2-Col2).
-
-%!      repeat_string(+String:string, +Amount:int) is det.
-%
-%       Writes a string a given number of times.
-%       True when the amount is non negative.
-repeat_string(_, 0) :-
-    nl.
-repeat_string(String, Amount) :-
-    Amount > 0,
-    write(String),
-    Amount1 is Amount - 1,
-    repeat_string(String, Amount1).
-
-%!      write_pieces(+Board:list, +Rows:int) is det.
-%
-%       Writes the board withtout a top border.
-%       True when the board is well defined.
-%
-%       @arg Board      the board to be written
-write_pieces([], 0).
-write_pieces([H|T], Rows) :-
-    write('|'), write_array(H), write('  '),
-    board_height(Height),
-    RowNumber is Height - Rows + 1,
-    write(RowNumber), nl,
-    write_line,
-    Rows1 is Rows - 1,
-    write_pieces(T, Rows1).
-
-%!      write_array(+Array:list) is det.
-%
-%       Writes the elements of a board row with the appropriate padding and separator.
-%       True when the board is weel defind.
-%
-%       @arg Array      the board row to be written
-write_array([]).
-write_array([H|T]) :-
-    write(' '), write(H), write(' |'),
-    write_array(T).
-
-write_columns_names(Column) :-
-    board_width(TotalColumns),
-    Column > TotalColumns,
-    !, nl, nl.
-write_columns_names(Column) :-
-    write('   '),
-    letter(Column, Letter),
-    write(Letter),
-    write(' '),
-    Next is Column + 1,
-    write_columns_names(Next).
-
-%!      write_next_player(+Player) is det.
-%
-%       Writes an indication to the next player.
-%       True when the Player is defined.
-%
-%       @arg Player     the next player
-write_next_player(Player):-
-    write('Next player: '), write(Player), nl, nl.
-
-%!      write_winner(+Player) is det.
-%
-%       Writes an indication to the winner of the game.
-%       True when the Player is defined.
-%
-%       @arg Player     the winner of the game
-write_winner(Player):-
-    write(Player), write(' won!!'), nl, nl.
-
-%!      write_border is det.
-%
-%       Writes an appropriated size border in underscores ('_').
-%       True when the board width is well defined.
-write_border :-
-    board_width(Width),
-    Amount is Width * 5 + 1,
-    repeat_string('_', Amount).
-
-%!      write_line is det.
-%
-%       Writes an appropriated size border in hyphens underscores ('-').
-%       True when the board width is well defined.
-write_line :-
-    board_width(Width),
-    Amount is Width * 5 + 1,
-    repeat_string('-', Amount).
 
 % TODO
 get_move(Board, Player, ReadableCoordinates, Row1-Col1-Row2-Col2) :-
@@ -149,7 +37,8 @@ get_move(Board, Player, ReadableCoordinates, Row1-Col1-Row2-Col2) :-
     get_destinations(ListOfPossibleMoves, Destinations),
     insert_multiple_matrix(PossibleMove, Board, Destinations, DemoMatrix),
     write_board(DemoMatrix),
-    get Move asking 'Where to? ',
+    board_prefix(P), write(P),
+    get Move asking 'Where to? ', !,
     readable_to_coordinates(Move, Row2-Col2),
     Row1-Col1-Row2-Col2 in ListOfPossibleMoves.
 
@@ -163,7 +52,8 @@ ask_strength_piece(GameState, Position, List, NewGameState) :-
     game_state(GameState, board, Board),
     write_board(Board),
     transform_list(ReadableList, readable_to_coordinates, List),
-    ask_menu_question(ReadableList, Ans, 'Capture piece by strength?'),
+    board_prefix(P),
+    ask_menu_question_prefix(ReadableList, Ans, 'Capture piece by strength?', P),
     remove_strength_asked(GameState, Position, Ans, ReadableList, NewGameState).
 
 remove_strength_asked(GameState, OwnPosition, Ans, ReadableList, NewGameState) :-
@@ -179,6 +69,18 @@ actually_remove_strength(GameState, OwnPosition, Pos, NewGameState) :-
     NewOpponentPieces is OpponentPieces - 1,
     lower_strength(Board1, OwnPosition, NewBoard),
     set_game_state(GameState, [board-NewBoard, opponent_pieces-NewOpponentPieces], NewGameState).
+
+%!      repeat_string(+String:string, +Amount:int) is det.
+%
+%       Writes a string a given number of times.
+%       True when the amount is non negative.
+repeat_string(_, 0) :-
+    nl.
+repeat_string(String, Amount) :-
+    Amount > 0,
+    write(String),
+    Amount1 is Amount - 1,
+    repeat_string(String, Amount1).
 
 % TODO
 readable_to_coordinates(Cola-Row, Row-Col) :-

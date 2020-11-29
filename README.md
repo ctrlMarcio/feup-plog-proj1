@@ -7,11 +7,12 @@ Resolution proposal for the first project of the Logic Programming course unit @
 
 - [Three Dragons](#three-dragons)
   - [Who and What](#who-and-what)
+  - [Instalation and Execution](#instalation-and-execution)
   - [Drogon, Rhaegal, and Viserion?](#drogon-rhaegal-and-viserion)
     - [The Game Board](#the-game-board)
     - [Pieces](#pieces)
       - [Dragons](#dragons)
-    - [Biography](#biography)
+- [Game Logic](#game-logic)
   - [Game State Representation](#game-state-representation)
     - [Board](#board)
     - [Current Player](#current-player)
@@ -21,6 +22,13 @@ Resolution proposal for the first project of the Logic Programming course unit @
       - [Final Game Board Example](#final-game-board-example)
       - [Piece Representation](#piece-representation)
   - [Visualization of the Game State](#visualization-of-the-game-state)
+  - [List of Valid Moves](#list-of-valid-moves)
+  - [Moves Execution](#moves-execution)
+  - [End of the Game](#end-of-the-game)
+  - [Board Evaluation](#board-evaluation)
+  - [Computer Move](#computer-move)
+  - [Conclusion](#conclusion)
+  - [Bibliography](#bibliography)
   - [Documentation](#documentation)
   - [License](#license)
 
@@ -31,6 +39,11 @@ ___
 - Three Dragons 2 made with ❤ by
   - Leonor Gomes, up201806567 • [GitHub](https://github.com/leonormgomes) • [Sigarra](https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=201806567)
   - Márcio Duarte, up201909936 • [GitHub](https://github.com/ctrlMarcio) • [Sigarra](https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=201909936)
+
+THANK YOU LOVE YOU <3 BYE :(
+
+## Instalation and Execution
+//TODO
 
 ## Drogon, Rhaegal, and Viserion?
 
@@ -70,13 +83,12 @@ The game ends when one of the players only has one piece left, hence the other p
 
 Dragons are regular pieces that can only be spawned whenever its cave is surrounded by all orthogonal sides. Only one dragon can be spawned from each cave. The side caves spawn a dragon with strength 3, while the main cave spawns a strength 5 dragon.
 
-### Biography
 
-- [Initial Game Presentation](https://boardgamegeek.com/thread/2347648/three-dragons-entry-2020-two-player-pnp-design-con)
-- [Official Game Rules](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
-- [Official Game Board](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
 
+
+# Game Logic
 ## Game State Representation
+//TODO: based on the intermediate report
 
 ### Board
 
@@ -229,6 +241,7 @@ color_value(x5, x, 5).
 These `color_value` facts work both ways, upon a piece, `o1` for example, one can easily find its owner and value, being them `o` and `1` respectively in this example. If one owns a piece owner and its value, `color_value` can returns its internal representation as well.
 
 ## Visualization of the Game State
+//TODO: based on the intermediate report
 
 The visualization of the game state predicate is implemented as follows:
 
@@ -277,8 +290,33 @@ Below lies the current representation of the initial state of the board:
 
 ![Inital state of the board in prolog](resources/game_representation.png)
 
-## Documentation
+## List of Valid Moves
+//TODO
+```prolog
 
+
+## Moves Execution
+//TODO
+
+## End of the Game
+//TODO 
+
+## Board Evaluation
+//TODO
+
+## Computer Move
+//TODO
+
+## Conclusion
+//TODO: conclusions, known issues, roadmap
+## Bibliography
+// intermediate report 
+ TODO: update
+- [Initial Game Presentation](https://boardgamegeek.com/thread/2347648/three-dragons-entry-2020-two-player-pnp-design-con)
+- [Official Game Rules](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
+- [Official Game Board](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
+## Documentation
+//TODO: update
 All the code in this repository is commented with the assistance of PlDoc.
 
 More info on Prolog documentation with PlDoc [right here](https://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/pldoc.html%27)).
