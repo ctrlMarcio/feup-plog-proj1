@@ -31,8 +31,15 @@ initial_options_menu(Option) :-
 
     write_header,
     ask_menu_default_prefix(Options, Option, 'Play', '\t\t\t\t\t').
-
+%!      process_initial_option(0).
+%
+%       Base case.
 process_initial_option(0).
+%!      process_initial_option(+Player).
+%
+%       Processes the choice the user made.
+%
+%       @args Player the player that is going to change.
 process_initial_option(Player) :-
     player1(Player1),
     player2(Player2),
@@ -42,8 +49,13 @@ process_initial_option(Player) :-
     set_choice(PlayerNumber, PlayerType),
     initial_menu.
 
+%!      ask_player_type(-Type).
+%
+%       Asks the user which type of player he/she wants and returns it as Type
+%
+%       @args Type the type the user chose.
 ask_player_type(Type) :-
     write_header,
     players(PlayerTypes),
-    ask_menu_question_prefix(PlayerTypes, Index, 'Choose player', '\t\t\t\t\t'), % TODO treat 0
+    ask_menu_question_prefix(PlayerTypes, Index, 'Choose player', '\t\t\t\t\t'), 
     nth1(Index, PlayerTypes, Type).
