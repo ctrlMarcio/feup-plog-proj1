@@ -190,7 +190,7 @@ value(GameState, Player, Value) :-
 %       @arg Value              the calculated value.
 value(GameState, _, Value) :-
     game_state(GameState, [player_pieces-PlayerPieces, opponent_pieces-OpponentPieces]), !,
-    Value is PlayerPieces - OpponentPieces.
+    Value is OpponentPieces - PlayerPieces.
 
 %!      choose_move(+GameState, +Player:string, +Level:number, -Move).
 %

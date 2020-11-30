@@ -40,10 +40,21 @@ ___
   - Leonor Gomes, up201806567 • [GitHub](https://github.com/leonormgomes) • [Sigarra](https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=201806567)
   - Márcio Duarte, up201909936 • [GitHub](https://github.com/ctrlMarcio) • [Sigarra](https://sigarra.up.pt/feup/pt/fest_geral.cursos_list?pv_num_unico=201909936)
 
-THANK YOU LOVE YOU <3 BYE :(
-
 ## Instalation and Execution
-//TODO
+
+In order to play the game, execute the following steps:
+- On Windows:
+  - SICStus console
+    - Open the SICStus console and click on File->Consult; 
+    - Choose the **three_dragons.pl** file from the source code folder;
+  - SICStus executable
+    - Add the executable to the environment variable path;
+    - Open a terminal window and execute `sicstus`;
+    - Execute `consult([path to the source code]/three_dragons.pl).`.
+- On Linux:
+   - Open a terminal window and execute the following command **sisctus-4.6.0.**;
+   - Write `consult([path to the source code]/three_dragons.pl).`;
+ - Run `play.` to play the game.
 
 ## Drogon, Rhaegal, and Viserion?
 
@@ -241,6 +252,7 @@ color_value(x5, x, 5).
 These `color_value` facts work both ways, upon a piece, `o1` for example, one can easily find its owner and value, being them `o` and `1` respectively in this example. If one owns a piece owner and its value, `color_value` can returns its internal representation as well.
 
 ## Visualization of the Game State
+
 //TODO: based on the intermediate report
 
 The visualization of the game state predicate is implemented as follows:
@@ -291,27 +303,99 @@ Below lies the current representation of the initial state of the board:
 ![Inital state of the board in prolog](resources/game_representation.png)
 
 ## List of Valid Moves
-//TODO
+
+The valid_moves/3 predicate is implemented as below:
 ```prolog
-
-
+valid_moves(GameState, Player, ListOfMoves) :-
+    game_state(GameState, board, Board),
+    all_valid_moves(Board, Player, 1-1, ListOfMoves).
+```
+This predicate uses the game_state/3 to fetch the current board and calls the all_valid_moves/4:
+```prolog
+all_valid_moves(_, _, Row-_, []) :-
+    board_height(Height),
+    Row > Height.
+all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
+    Col1 is Col + 1,
+    board_width(Width),
+    Col1 =< Width, !,
+    possible_moves(Board, Player, Row-Col, List1),
+    all_valid_moves(Board, Player, Row-Col1, List2),
+    append(List1, List2, ListOfMoves).
+all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
+    Row1 is Row + 1,
+    possible_moves(Board, Player, Row-Col, List1),
+    all_valid_moves(Board, Player, Row1-0, List2),
+    append(List1, List2, ListOfMoves).
+```
+This predicate calculates the cells a piece can go from a specific cell. It checks if the cells are inside the board and if they are empty with the possible_moves/4. It also appends the lists with the results in a final list, ListOfMoves.
 ## Moves Execution
-//TODO
+
+The move/3 predicate is implemented as below:
+```prolog
+move(GameState, Row1-Col1-Row2-Col2, NewGameState) :-
+    game_state(GameState, [board-Board, current_player-Player, player_pieces-PlayerPieces, opponent_pieces-OpponentPieces, caves-Caves]),
+
+    get_matrix(Board, Row1, Col1, Piece),
+    insert_matrix(Piece, Board, Row2, Col2, Board1),
+    clear_piece(Board1, Row1-Col1, Board2),
+
+    check_if_captures(Board2, Row2-Col2, Player, OpponentPieces, Board3, NewOpponentPieces),
+    summon_dragon(Board3, Row2-Col2, Player, PlayerPieces, Caves, Board4, NewPlayerPieces, NewCaveL-NewCaveM-NewCaveR),
+    reset_caves(Board4, Row1-Col1, Caves, NewBoard),
+
+    set_game_state(GameState, [opponent_pieces-NewOpponentPieces, player_pieces-NewPlayerPieces, cave_l-NewCaveL, cave_m-NewCaveM, cave_r-NewCaveR, board-NewBoard], NewGameState).
+```
+It first uses the game_state/2 predicade to fetch the board, the current player the player pieces, the opponent pieces and the caves.
+
+After that, it fetches Piece, the piece that is going to move and inserts it in the new cell in Board1. It removes the piece in the old cell in Board2.
+
+In check_if_captures/6 predicate, it checks if there's a possibility to capture an enemy piece and if so, it asks the human user if it wants to. The new board is returned in Board 3 such as the new number of enemy pieces in NewOpponentPieces.
+
+In summon_dragon/8, it checks if a new dragon is summoned and if so, the new board is returned in Board4, such as the new player pieces in NewPlayerPieces and the caves in NewCaveL-NewCaveM-NewCaveR.
+
+In reset_caves/4, if necessary it resets a cave that was turned into a dragon. The last update of the board is returned in NewBoard.
+
+Finally, the move predicate updates the new information with the set_game_state/3 predicate.
+
 
 ## End of the Game
-//TODO 
 
+The game is over when a player only has one piece. In order to check if the game is over, the game_over/2 predicate is called and it's implemented as below:
+```prolog
+game_over(GameState, Player) :-
+    game_state(GameState, [current_player-Player, opponent_pieces-1]).
+```
+This predicate uses the game_state/2 predicate to check if there's only one opponent piece and if so, it returns the Player as winner.
 ## Board Evaluation
-//TODO
+
+The value/3 predicate is implemented as below:
+```prolog
+value(GameState, Player, Value) :-
+    game_state(GameState, [current_player-Player, player_pieces-PlayerPieces, opponent_pieces-OpponentPieces]), !,
+    Value is PlayerPieces - OpponentPieces.
+value(GameState, _, Value) :-
+    game_state(GameState, [player_pieces-PlayerPieces, opponent_pieces-OpponentPieces]), !,
+    Value is OpponentPieces - PlayerPieces.
+```
+This predicate evaluates the state of the game. The goal for a player is to have more pieces than the opponent and the bigger the difference the better. Therefore, Value is the difference between the number of the player's pieces.
 
 ## Computer Move
-//TODO
+
+The predicate choose_move/4 is implemented as below:
 
 ## Conclusion
-//TODO: conclusions, known issues, roadmap
+
+After the development of the project, we conclude that prolog as a programming language is not ideal to develop applications based on I/O operations. However, using logic operations is very intuitive. 
+
+### Known issues
+
+Our minimax algorithm is not optimized for big levels of depth because there's always a lot of options to calculate. 
+
+Also, because we're using the built-in predicate "read", if the user only writes `.`, the program crashes. It also applies if the user writes for example `a-.` when choosing a board cell.
+
+
 ## Bibliography
-// intermediate report 
- TODO: update
 - [Initial Game Presentation](https://boardgamegeek.com/thread/2347648/three-dragons-entry-2020-two-player-pnp-design-con)
 - [Official Game Rules](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
 - [Official Game Board](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
