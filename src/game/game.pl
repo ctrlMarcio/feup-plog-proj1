@@ -9,7 +9,7 @@ Responsible for all game related predicates.
 board_width(9).
 board_height(9).
 
-%!      init_board(-Board:list) is det.
+%!      init_board(-Board:list)
 %
 %       True whenever the board_witdth and board_height are larger than 4 and the widht is odd.
 %
@@ -27,7 +27,7 @@ init_board(Board) :-
 
     append(Board1, Half2, Board).
 
-%!      empty_board(-Board:list) is det.
+%!      empty_board(-Board:list) 
 %
 %       Gets an empty board.
 %       True whenever the board_witdth and board_height are larger than 4 and the widht is odd.
@@ -45,10 +45,28 @@ empty_board(Board) :-
 
     append(Board1, Half2, Board).
 
-% TODO
+%!          all_valid_moves(+Board, +Player, +Row-Col, -ListOfMoves).
+%  
+%           Base case.
+%
+%           @arg Board  the board of the game.
+%           @arg Player the current player of the game.
+%           @arg Row-Col the cell that we want the valid moves.
+%           @arg ListOfMoves list that returns the result.
 all_valid_moves(_, _, Row-_, []) :-
     board_height(Height),
     Row > Height.
+%!          all_valid_moves(+Board, +Player, +Row-Col, -ListOfMoves).
+%  
+%           Verifies if the col above is part of the board.
+%           Gets possible moves (empty cells) in List1. 
+%           Calculates all valid moves for col above.
+%           Appends possible moves with valid moves for cell above.
+%
+%           @arg Board  the board of the game.
+%           @arg Player the current player of the game.
+%           @arg Row-Col the cell that we want the valid moves.
+%           @arg ListOfMoves list that returns the result.
 all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
     Col1 is Col + 1,
     board_width(Width),
@@ -56,13 +74,32 @@ all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
     possible_moves(Board, Player, Row-Col, List1),
     all_valid_moves(Board, Player, Row-Col1, List2),
     append(List1, List2, ListOfMoves).
+%!          all_valid_moves(+Board, +Player, +Row-Col, -ListOfMoves).
+%  
+%           Gets possible moves (empty cells) in List1. 
+%           Calculates all valid moves for right row.
+%           Appends possible moves with valid moves for cell on the right.
+%
+%           @arg Board  the board of the game.
+%           @arg Player the current player of the game.
+%           @arg Row-Col the cell that we want the valid moves.
+%           @arg ListOfMoves list that returns the result.
 all_valid_moves(Board, Player, Row-Col, ListOfMoves) :-
     Row1 is Row + 1,
     possible_moves(Board, Player, Row-Col, List1),
     all_valid_moves(Board, Player, Row1-0, List2),
     append(List1, List2, ListOfMoves).
 
-% TODO
+%!          possible_moves(+Board, +Player, +Row-Col, -List).
+%  
+%           Gets possible moves (empty cells) in List1. 
+%           Calculates possible moves up, down, right and left of Row-Col. 
+%           Appends all possible moves.
+%
+%           @arg Board  the board of the game.
+%           @arg Player the current player of the game.
+%           @arg Row-Col the cell that we want the possible moves.
+%           @arg List list that returns the result.
 possible_moves(Board, Player, Row-Col, List) :-
     Row-Col on Board is_of Player,
     possible_moves_up(Board, Row-Col, Row-Col, ListUp),
@@ -74,39 +111,107 @@ possible_moves(Board, Player, Row-Col, List) :-
     append(List2, ListLeft, List3),
     delete(List3, Row-Col-Row-Col, List4),  % deletes self position
     sort(List4, List).                 % sort removes duplicates 
+%!          possible_moves(+Board, +Player, +Row-Col, -List).
+%  
+%           Base case.
+%
+%           @arg Board  the board of the game.
+%           @arg Player the current player of the game.
+%           @arg Row-Col the cell that we want the possible moves.
+%           @arg List list that returns the result.
 possible_moves(_, _, _, []).
 
-% TODO
+%!          check_if_captures(+Board, +Row-Col, +Player, +OpponentPieces, -NewBoard, -NewOpponentPieces).
+%  
+%           Checks if captured up, down, left and right of Row-Col.
+%
+%           @arg Board  the board of the game.
+%           @arg Row-Col the cell where the piece is.
+%           @arg Player the current player of the game.
+%           @arg OpponentPieces the number of opponent pieces.
+%           @arg NewBoard the updated board.
+%           @arg NewOpponentPieces the updated number of opponent pieces.
 check_if_captures(Board, Row-Col, Player, OpponentPieces, NewBoard, NewOpponentPieces) :-
     get_matrix(Board, Row, Col, Piece),
-    % TODO remove player, Piece is enough
     capture_surrounded_up(Board, Row-Col, Piece, Player, OpponentPieces, Board1, OPieces1),
     capture_surrounded_down(Board1, Row-Col, Piece, Player, OPieces1, Board2, OPieces2),
     capture_surrounded_left(Board2, Row-Col, Piece, Player, OPieces2, Board3, OPieces3),
     capture_surrounded_right(Board3, Row-Col, Piece, Player, OPieces3, NewBoard, NewOpponentPieces).
 
+%!          summon_dragon(+Board, +Row-Col, +Player, +PlayerPieces, +Caves, -NewBoard, -NewPlayerPieces, -NewCaves).
+%  
+%           Checks if a dragon is summoned and, in that case, creates it and updates the player pieces.
+%
+%           @arg Board  the board of the game.
+%           @arg Row-Col the cell where the piece is.
+%           @arg Player the current player of the game.
+%           @arg PlayerPieces the number of player pieces.
+%           @arg Caves the caves of the game.
+%           @arg NewBoard the updated board.
+%           @arg NewPlayerPieces the updated number of player pieces.
+%           @arg NewCaves the updated caves.
 summon_dragon(Board, Row-Col, Player, PlayerPieces, Caves, NewBoard, NewPlayerPieces, NewCaves) :-
     check_if_summons_dragon(Board, Row-Col, Player, CaveRow-CaveCol), !,
     create_dragon(Board, Player, CaveRow-CaveCol, Caves, NewCaves, NewBoard),
     NewPlayerPieces is PlayerPieces + 1.
+%!          summon_dragon(+Board, +Row-Col, +Player, +PlayerPieces, +Caves, -NewBoard, -NewPlayerPieces, -NewCaves).
+%  
+%           Base case.
+%
+%           @arg Board  the board of the game.
+%           @arg Row-Col the cell where the piece is.
+%           @arg Player the current player of the game.
+%           @arg PlayerPieces the number of player pieces.
+%           @arg Caves the caves of the game.
+%           @arg NewBoard the updated board.
+%           @arg NewPlayerPieces the updated number of player pieces.
+%           @arg NewCaves the updated caves.
 summon_dragon(Board, _, _, PlayerPieces, Caves, Board, PlayerPieces, Caves).
 
-% TODO
+%!          reset_caves(+Board, +Row-Col, +Cave-_-_, -NewBoard).
+%  
+%           Resets the left cave.
+%
+%           @arg Board  the board of the game.
+%           @arg Row-Col the cell where the cave is.
+%           @arg Cave-_-_ the left cave.
+%           @arg NewBoard the updated board.
 reset_caves(Board, Row-Col, Cave-_-_, NewBoard) :-
     caves_row(Row),
     left_cave_col(Col), !,
     insert_matrix(Cave, Board, Row, Col, NewBoard).
 
+%!          reset_caves(+Board, +Row-Col, +_-Cave-_, -NewBoard).
+%  
+%           Resets the middle cave.
+%
+%           @arg Board  the board of the game.
+%           @arg Row-Col the cell where the cave is.
+%           @arg _-Cave-_ the middle cave.
+%           @arg NewBoard the updated board.
 reset_caves(Board, Row-Col, _-Cave-_, NewBoard) :-
     caves_row(Row),
     middle_cave_col(Col), !,
     insert_matrix(Cave, Board, Row, Col, NewBoard).
 
+%!          reset_caves(+Board, +Row-Col, +_-_-Cave, -NewBoard).
+%  
+%           Resets the right cave.
+%
+%           @arg Board  the board of the game.
+%           @arg Row-Col the cell where the cave is.
+%           @arg _-_-RIght the right cave.
+%           @arg NewBoard the updated board.
 reset_caves(Board, Row-Col, _-_-Cave, NewBoard) :-
     caves_row(Row),
     right_cave_col(Col), !,
     insert_matrix(Cave, Board, Row, Col, NewBoard).
 
+%!          reset_caves(+Board, _, _, -Board).
+%  
+%           Base case.
+%
+%           @arg Board  the board of the game.
 reset_caves(Board, _, _, Board).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
