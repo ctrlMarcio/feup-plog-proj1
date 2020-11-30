@@ -1,3 +1,7 @@
+/** <module> Board
+
+Responsible for the board of the game.
+*/
 board_prefix('\t\t\t').
 
 %!      write_board(+Board:list) is det.

@@ -80,35 +80,124 @@ insert_matrix(Element, [HT|MT], Row, Column, [HT|Res]) :-
     Row1 is Row - 1,
     insert_matrix(Element, MT, Row1, Column, Res).
 
-% TODO
+%!      get_matrix(+Matrix, +Row, +Column, -X) 
+%   
+%        Base case.
+%        Returns in X the value in matrix in row and column.
+%
+%       @arg Matrix        the matrix.
+%       @arg Row           the row where the element is. Starts at 1.
+%       @arg Column        the column where the element is. Starts at 1.
+%       @arg X             the value in the matrix in row and column.
 get_matrix([H|_], 1, Column, X) :-
     nth1(Column, H, X).
+
+%!      get_matrix(+Matrix, +Row, +Column, -X) 
+%   
+%        Returns in X the value in matrix in row and column.
+%
+%       @arg Matrix        the matrix.
+%       @arg Row           the row where the element is. Starts at 1.
+%       @arg Column        the column where the element is. Starts at 1.
+%       @arg X             the value in the matrix in row and column.
 get_matrix([_|T], Row, Column, X) :-
     Row1 is Row - 1,
     get_matrix(T, Row1, Column, X).
 
-% TODO
+%!      insert_multiple_matrix(+Element, +Matrix, +List, -ResMatrix) 
+%   
+%        Insert one value in the matrix in multiple positions in List at the same time.
+%        Base case.
+%
+%       @arg Element     the element to be inserted.
+%       @arg Matrix      the initial matrix.
+%       @arg List        the list where the positions are.
+%       @arg ResMatrix   the resulting matrix.
 insert_multiple_matrix(_, Matrix, [], Matrix).
+%!      insert_multiple_matrix(+Element, +Matrix, +List, -ResMatrix) 
+%   
+%        Insert one value in the matrix in multiple positions in List at the same time.
+%
+%       @arg Element     the element to be inserted.
+%       @arg Matrix      the initial matrix.
+%       @arg List        the list where the positions are.
+%       @arg ResMatrix   the resulting matrix.
 insert_multiple_matrix(Element, Matrix, [HR-HC|T], ResMatrix) :-
     insert_matrix(Element, Matrix, HR, HC, Matrix1),
     insert_multiple_matrix(Element, Matrix1, T, ResMatrix).
 
-% TODO
+%!      transform_list(+List, +Predicate, -ResList) 
+%   
+%        Transforms each element of List with Predicate and the result is ResList.
+%        Base case.
+%
+%       @arg List     initial list.
+%       @arg Predicate  the predicate that is going to be used to transform the list.
+%       @arg ResList   the resulting List.
 transform_list([], _, []).
+%!      transform_list(+List, +Predicate, -ResList) 
+%   
+%        Transforms each element of List with Predicate and the result is ResList.
+%
+%       @arg List     initial list.
+%       @arg Predicate  the predicate that is going to be used to transform the list.
+%       @arg ResList   the resulting List.
 transform_list([H|T], P, [H1|T1]) :-
     Pred =.. [P, H, H1],
     Pred,
     transform_list(T, P, T1).
 
-% TODO
+%!      update_value(+List, +Value, +Index, -ResList). 
+%   
+%        Alters value in List with Value in Index. Returns in ResList.
+%        Base case.
+%
+%       @arg List     initial list.
+%       @arg Value  the updated value.
+%       @arg Index the index that needs to be updated.
+%       @arg ResList   the resulting List.
 update_value([], _, _, []).
+%!      update_value(+List, +Value, +Index, -ResList). 
+%   
+%        Alters value in List with Value in Index. Returns in ResList.
+%        Base case.
+%
+%       @arg List     initial list.
+%       @arg Value  the updated value.
+%       @arg Index the index that needs to be updated.
+%       @arg ResList   the resulting List.
 update_value([_|T], Value, 1, [Value|T]).
+%!      update_value(+List, +Value, +Index, -ResList). 
+%   
+%        Alters value in List with Value in Index. Returns in ResList.
+%
+%       @arg List     initial list.
+%       @arg Value  the updated value.
+%       @arg Index the index that needs to be updated.
+%       @arg ResList   the resulting List.
 update_value([H|T], Value, Index, [H|T1]) :-
     Index1 is Index - 1,
     update_value(T, Value, Index1, T1).
 
+%!      push_matrix_element(+Matrix, +Row-Col, +List, -ResList). 
+%   
+%        Adds Row-Col in ResList if that position exists
+%
+%       @arg Matrix    the matrix.
+%       @arg Row-Col  the position.
+%       @arg List      auxiliary list.
+%       @arg ResList   the resulting List.
 push_matrix_element(Matrix, Row-Col, List, [Row-Col|List]) :-
     get_matrix(Matrix, Row, Col, _).
+%!      push_matrix_element(+Matrix, +Row-Col, +List, -ResList). 
+%   
+%        Adds Row-Col in ResList if that position exists
+%        Base case.
+%
+%       @arg Matrix    the matrix.
+%       @arg Row-Col  the position.
+%       @arg List      auxiliary list.
+%       @arg ResList   the resulting List.
 push_matrix_element(_, _, List, List).
 
 cls :- write('\33\[2J').

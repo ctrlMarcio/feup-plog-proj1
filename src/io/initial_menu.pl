@@ -1,3 +1,7 @@
+/** <module> Initial Menu
+
+Responsible for the inital menu of the game.
+*/
 
 %!      initial_menu
 %

@@ -7,7 +7,6 @@ Defines operators of general use.
 readln X :-
   read(X), skip_line.
 
-% TODO
 :- op(800, xfx, in).
 Element in List :-
   member(Element, List).
@@ -15,7 +14,6 @@ Element in List :-
 :- op(900, fx, get).
 :- op(800, xfx, asking).
 
-% TODO
 get Answer asking Question :-
   ask_user(Question, Answer).
 

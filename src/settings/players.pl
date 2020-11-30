@@ -1,6 +1,5 @@
-% TODO docs
 
-% types
+% player types
 human(-1).
 player_type('Human', X) :-
     human(X).
@@ -20,9 +19,11 @@ player_number(o).
 % both
 :- dynamic(player/2).
 
+% the initial players are both human
 player(x, -1).
 player(o, -1).
 
+% alters the type of player
 set_choice(PlayerNumber, PlayerType) :-
     player_number(PlayerNumber),
     player_type(PlayerType, PlayerLevel),
