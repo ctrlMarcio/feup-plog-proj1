@@ -107,7 +107,7 @@ value(GameState, Player, Value) :-
     Value is PlayerPieces - OpponentPieces.
 value(GameState, _, Value) :-
     game_state(GameState, [player_pieces-PlayerPieces, opponent_pieces-OpponentPieces]), !,
-    Value is PlayerPieces - OpponentPieces.
+    Value is OpponentPieces - PlayerPieces.
 
 choose_move(GameState, Player, Level, Move) :-
     minimax(GameState, Player, Player, Level, _, Move).
