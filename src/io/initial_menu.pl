@@ -1,10 +1,17 @@
-% TODO
 
+%!      initial_menu
+%
+%       Starts the initial menu.
 initial_menu :-
     repeat,
         initial_options_menu(Option),
         process_initial_option(Option).
 
+%!      initial_options_menu(-Option).
+%
+%       Shows the initial menu.
+%
+%       @args Option the option the user chooses.
 initial_options_menu(Option) :-
     player1(Player1),
     player2(Player2),
