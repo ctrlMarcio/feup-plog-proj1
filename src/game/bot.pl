@@ -8,6 +8,7 @@ minimax(GameState, Player, Player, 1, Strength, NewGameState) :-
     possible_game_states(GameState, Player, GameStates),
     best_moves(GameState, Player, GameStates, BestMoves),
     random_member(Strength-NewGameState, BestMoves).
+
 minimax(GameState, CurrentPlayer, Player, 1, Strength, NewGameState) :-
     CurrentPlayer \= Player,
     possible_game_states(GameState, Player, GameStates),
