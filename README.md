@@ -459,11 +459,6 @@ Also, because we're using the built-in predicate "read", if the user only writes
 - [Official Game Rules](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
 - [Official Game Board](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
 
-## Documentation
-
-All the code in this repository is commented with the assistance of PlDoc.
-
-More info on Prolog documentation with PlDoc [right here](https://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/pldoc.html%27)).
 
 ## License
 
