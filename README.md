@@ -436,12 +436,18 @@ This predicate evaluates the state of the game. The goal for a player is to have
 
 ## Computer Move
 
-The predicate `choose_move/4` is implemented as below:
+The predicate `choose_move/4` is implemented as shown below:
 
 ```prolog
 choose_move(GameState, Player, Level, Move) :-
     minimax(GameState, Player, Player, Level, _, Move).
 ```
+
+The minimax has 2 base cases and a recursive step, the code won't be shown here because of visibility purposes, but can be found in **src/game/bot.pl**.
+
+Essentially, for level 0, the bot will choose a random move and play it. For level 1, it gets the best possible immediate play. The recursive will iterate through levels, calculating level number of plays ahead until it reaches level 1.
+
+For more information on minimax, click [here](https://en.wikipedia.org/wiki/Minimax).
 
 ## Conclusion
 
@@ -459,6 +465,11 @@ Also, because we're using the built-in predicate "read", if the user only writes
 - [Official Game Rules](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
 - [Official Game Board](https://drive.google.com/drive/folders/1xNoHSM08SChVW2TWtzU8Qje6m7hxrEYh)
 
+## Documentation
+
+All the code in this repository is commented with the assistance of PlDoc.
+
+More info on Prolog documentation with PlDoc [right here](https://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/pldoc.html%27)).
 
 ## License
 
